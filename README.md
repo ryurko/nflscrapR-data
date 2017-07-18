@@ -4,9 +4,28 @@ Within the data folder are 3 folders containing .csv files to download.  To down
 
 # Season Play-by-play
 
+* [2009 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2009.csv)
+* [2010 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2010.csv)
+* [2011 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2011.csv)
+* [2012 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2012.csv)
+* [2013 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2013.csv)
+* [2014 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2014.csv)
+* [2015 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2015.csv)
+* [2016 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2016.csv)
+
+
 The season_play_by_play folder contains play-by-play datasets for each regular season game in each season from 2009-2016.  The files are separated by season. Each dataset contains 89 columns (see the nflscrapR game_play_by_play() function documentation for descriptions).
 
 # Season and Game Player Stats
+
+* [Season-Player Passing Stats](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_player_stats/season_passing_df.csv)
+* [Season-Player Receiving Stats](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_player_stats/season_receiving_df.csv)
+* [Season-Player Rushing Stats](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_player_stats/season_rushing_df.csv)
+
+* [Game-Player Passing Stats](https://github.com/ryurko/nflscrapR-data/blob/master/data/game_player_stats/game_passing_df.csv)
+* [Game-Player Receiving Stats](https://github.com/ryurko/nflscrapR-data/blob/master/data/game_player_stats/game_receiving_df.csv)
+* [Game-Player Rushing Stats](https://github.com/ryurko/nflscrapR-data/blob/master/data/game_player_stats/game_rushing_df.csv)
+
 
 The season_player_stats folder contains datasets with player statistics at the season level, while the game_player_stats contains datasets with player statistics at the game level.  There are 3 types of datasets in each folder:
 
