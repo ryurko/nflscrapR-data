@@ -1,6 +1,6 @@
 # nflscrapR Data Files
 
-Within the data folder are 3 folders containing .csv files to download.
+Within the data folder are 3 folders containing .csv files to download.  To download a download, click on it then right click on the Download button to save the file.
 
 # Season Play-by-play
 
