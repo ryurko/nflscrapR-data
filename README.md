@@ -62,6 +62,12 @@ The datasets contain traditional stats as well as expected points added (EPA) ba
 21. TD_per_Att - TDs thrown per pass attempt
 22. Int_per_Att - INTs thrown per pass attempt
 23. TD_per_Comp - TDs thrown per completion
+24. Total_WPA - total win probability added from pass attempts
+25. Win_Success_Rate - percentage of pass attempts with positive WPA
+26. WPA_per_Att - WPA per pass attempt
+27. WPA_per_Comp - WPA per completion
+28. WPA_Comp_Perc - completion percentage weighted by the WPA for each play
+29. Total_Clutch_EPA - total EPA from pass attempts weighted by each play's WPA
 
 # Receiving Stats
 
@@ -86,6 +92,12 @@ The datasets contain traditional stats as well as expected points added (EPA) ba
 19. TD_per_Targets - TDs caught per target
 20. Fumbles_per_Rec - fumbles per reception
 21. TD_per_Rec - TDs caught per reception
+22. Total_WPA - total win probability added from all targets
+23. Win_Success_Rate - percentage of targets with positive WPA
+24. WPA_per_Target - WPA per target
+25. WPA_per_Rec - WPA per reception
+26. WPA_Rec_Perc - reception percentage weighted by the WPA for each play
+27. Total_Clutch_EPA - total EPA from targets weighted by each play's WPA
 
 # Rushing Stats
 
@@ -101,4 +113,9 @@ The datasets contain traditional stats as well as expected points added (EPA) ba
 10. EPA_Ratio - ratio of EPA for carries with positive EPA to total EPA
 11. TD_per_Car - TDs per carry
 12. Fumbles_per_Car - fumbles per carry
+13. Total_WPA - total win probability added from all carries
+14. Win_Success_Rate - percentage of carries with positive WPA
+15. WPA_per_Car - WPA per carry
+16. WPA_Ratio - ratio of WPA for carries with positive WPA to total WPA
+17. Total_Clutch_EPA - total EPA from carries weighted by each play's WPA
 
