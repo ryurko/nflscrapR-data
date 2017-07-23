@@ -78,7 +78,14 @@ calc_passing_splits <- function(splits,pbp_df) {
               WPA_per_Att = Total_WPA / Attempts,
               WPA_per_Comp = sum(Reception*WPA,na.rm=TRUE) / Completions,
               WPA_Comp_Perc = sum(Reception*WPA,na.rm=TRUE)/sum(abs(WPA),na.rm=TRUE),
-              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE))
+              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE),
+              airEPA_Comp = sum(Reception*airEPA,na.rm=TRUE),
+              airEPA_Incomp = sum(as.numeric(Reception==0)*airEPA,na.rm=TRUE),
+              Total_airEPA = sum(airEPA,na.rm=TRUE),
+              airEPA_per_Att = Total_airEPA / Attempts,
+              airEPA_per_Comp = airEPA_Comp / Completions,
+              air_Success_Rate = length(which(airEPA>0)) / Attempts,
+              air_Comp_Success_Rate = length(which((Reception*airEPA)>0)) / Attempts)
   return(pass_output)
 }
 
@@ -139,7 +146,16 @@ calc_receiving_splits <- function(splits,pbp_df) {
               WPA_per_Target = Total_WPA / Targets,
               WPA_per_Rec = sum(Reception*WPA,na.rm=TRUE) / Receptions,
               WPA_Rec_Perc = sum(Reception*WPA,na.rm=TRUE)/sum(abs(WPA),na.rm=TRUE),
-              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE)) 
+              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE),
+              AirYards_per_Target = sum(AirYards,na.rm=TRUE) / Targets,
+              airEPA_per_Target = sum(airEPA,na.rm=TRUE) / Targets,
+              yacEPA_Rec = sum(Reception*yacEPA,na.rm=TRUE),
+              yacEPA_Drop = sum(as.numeric(Reception==0)*yacEPA,na.rm=TRUE),
+              Total_yacEPA = sum(yacEPA,na.rm=TRUE),
+              yacEPA_per_Target = Total_yacEPA / Targets,
+              yacEPA_per_Rec = yacEPA_Rec / Receptions,
+              yac_Success_Rate = length(which(yacEPA>0)) / Targets,
+              yac_Rec_Success_Rate = length(which((Reception*yacEPA)>0)) / Targets)
   return(rec_output)
 }
 

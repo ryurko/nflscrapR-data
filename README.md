@@ -14,7 +14,7 @@ Within the data folder are 3 folders containing .csv files to download.  To down
 * [2016 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2016.csv)
 
 
-The season_play_by_play folder contains play-by-play datasets for each regular season game in each season from 2009-2016.  The files are separated by season. Each dataset contains 89 columns (see the nflscrapR game_play_by_play() function documentation for descriptions).
+The season_play_by_play folder contains play-by-play datasets for each regular season game in each season from 2009-2016.  The files are separated by season. Each dataset contains 100 columns (see the nflscrapR game_play_by_play() and season_play_by_play() function documentation for descriptions).
 
 # Season and Game Player Stats
 
@@ -68,6 +68,13 @@ The datasets contain traditional stats as well as expected points added (EPA) ba
 27. WPA_per_Comp - WPA per completion
 28. WPA_Comp_Perc - completion percentage weighted by the WPA for each play
 29. Total_Clutch_EPA - total EPA from pass attempts weighted by each play's WPA
+30. airEPA_Comp - total EPA in the air for completed passes
+31. airEPA_Incomp - total EPA that could've been from incomplete passes
+32. Total_airEPA - total EPA in the air from all passes
+33. airEPA_per_Att - total airEPA per pass attempt
+34. airEPA_per_Comp - total airEPA from completions per completion
+35. air_Success_Rate - percentage of pass attempts with positive airEPA
+36. air_Comp_Success - percentage of pass attempts with positive airEPA for completions
 
 # Receiving Stats
 
@@ -98,6 +105,15 @@ The datasets contain traditional stats as well as expected points added (EPA) ba
 25. WPA_per_Rec - WPA per reception
 26. WPA_Rec_Perc - reception percentage weighted by the WPA for each play
 27. Total_Clutch_EPA - total EPA from targets weighted by each play's WPA
+28. AirYards_per_Target - air yards per target
+29. airEPA_per_Target - airEPA per target providing the value of the air yards
+30. yacEPA_Rec - EPA from yards after catch for receptions
+31. yacEPA_Drop - the cost of dropping/missing the pass
+32. Total_yacEPA - total EPA from yards after catch including cost of drops
+33. yacEPA_per_Target - total EPA from yards after catch per target
+34. yacEPA_per_Rec - total EPA from yards after catch per reception
+35. yac_Success_Rate - percentage of targets with positive yacEPA
+36. yac_Rec_Success_Rate - percentage of targets with positive yacEPA for receptions
 
 # Rushing Stats
 
