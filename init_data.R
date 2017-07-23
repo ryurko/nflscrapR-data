@@ -78,7 +78,7 @@ calc_passing_splits <- function(splits,pbp_df) {
               WPA_per_Att = Total_WPA / Attempts,
               WPA_per_Comp = sum(Reception*WPA,na.rm=TRUE) / Completions,
               WPA_Comp_Perc = sum(Reception*WPA,na.rm=TRUE)/sum(abs(WPA),na.rm=TRUE),
-              Total_Clutch_EPA = sum(EPA*WPA,na.rm=TRUE))
+              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE))
   return(pass_output)
 }
 
@@ -104,7 +104,7 @@ calc_rushing_splits <- function(splits,pbp_df) {
               Win_Success_Rate = length(which(WPA>0)) / Carries,
               WPA_per_Car = Total_WPA / Carries,
               WPA_Ratio = sum(as.numeric(WPA>0)*WPA,na.rm=TRUE)/sum(abs(WPA),na.rm=TRUE),
-              Total_Clutch_EPA = sum(EPA*WPA,na.rm=TRUE)) 
+              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE)) 
   return(rush_output)
 }
 
@@ -139,7 +139,7 @@ calc_receiving_splits <- function(splits,pbp_df) {
               WPA_per_Target = Total_WPA / Targets,
               WPA_per_Rec = sum(Reception*WPA,na.rm=TRUE) / Receptions,
               WPA_Rec_Perc = sum(Reception*WPA,na.rm=TRUE)/sum(abs(WPA),na.rm=TRUE),
-              Total_Clutch_EPA = sum(EPA*WPA,na.rm=TRUE)) 
+              Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE)) 
   return(rec_output)
 }
 
