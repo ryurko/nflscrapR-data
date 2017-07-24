@@ -21,7 +21,7 @@ ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
 ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
        aes(x=air_Success_Rate, y=Success_Rate)) + geom_text(aes(label=Player_Name)) +
   geom_smooth(method="lm") +
-  xlab("airEPA Completions Success Rate") + ylab("Success Rate") + theme_bw() +
+  xlab("airEPA Success Rate") + ylab("Success Rate") + theme_bw() +
   labs(title="Relationship Between Success Rate and airEPA Success Rate for Passing in 2016 \n(min 100 attempts)")
 
 # Using the season_rushing_df:
