@@ -24,7 +24,6 @@ ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
   xlab("airEPA Completions Success Rate") + ylab("Success Rate") + theme_bw() +
   labs(title="Relationship Between Success Rate and airEPA Success Rate for Passing in 2016 \n(min 100 attempts)")
 
-
 # Using the season_rushing_df:
 
 ggplot(filter(season_rushing_df,Season==2016 & Carries >= 50),
@@ -52,5 +51,4 @@ ggplot(filter(season_receiving_df, Season==2016 & Targets >= 50),
   geom_smooth(method="lm") +
   xlab("Reception Percentage") + ylab("yacEPA per Reception") + theme_bw() +
   labs(title="Relationship Between yacEPA per Reception and Reception Percentage for Receiving in 2016 \n(min 50 targets)")
-
 
