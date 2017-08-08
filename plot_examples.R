@@ -52,3 +52,31 @@ ggplot(filter(season_receiving_df, Season==2016 & Targets >= 50),
   xlab("Reception Percentage") + ylab("yacEPA per Reception") + theme_bw() +
   labs(title="Relationship Between yacEPA per Reception and Reception Percentage for Receiving in 2016 \n(min 50 targets)")
 
+# Jay Cutler and Ryan Tannehill
+
+ggplot(filter(season_passing_df, Player_Name %in% c("J.Cutler","R.Tannehill"))) +
+  geom_line(aes(x=Season,y=Comp_Perc,color=Player_Name),size=2) +
+  ylab("Completion %") + theme_bw() +
+  labs(title="Cutler vs Tannehill: Completion %")
+
+ggplot(filter(season_passing_df, Player_Name %in% c("J.Cutler","R.Tannehill"))) +
+  geom_line(aes(x=Season,y=EPA_Comp_Perc,color=Player_Name),size=2) +
+  ylab("EPA Weighted-Completion %") + theme_bw() +
+  labs(title="Cutler vs Tannehill: EPA Weighted-Completion %")
+
+
+ggplot(filter(season_passing_df, Player_Name %in% c("J.Cutler","R.Tannehill"))) +
+  geom_line(aes(x=Season,y=Success_Rate,color=Player_Name),size=2) +
+  ylab("Success Rate") + theme_bw() +
+  labs(title="Cutler vs Tannehill: Success Rate")
+
+ggplot(filter(season_passing_df, Player_Name %in% c("J.Cutler","R.Tannehill"))) +
+  geom_line(aes(x=Season,y=air_Comp_Success_Rate,color=Player_Name),size=2) +
+  ylab("Air Completion Success Rate") + theme_bw() +
+  labs(title="Cutler vs Tannehill: Air Completion Success Rate")
+
+ggplot(filter(season_passing_df, Player_Name %in% c("J.Cutler","R.Tannehill"))) +
+  geom_line(aes(x=Season,y=airEPA_per_Comp,color=Player_Name),size=2) +
+  ylab("Air EPA per Completion") + theme_bw()
+
+
