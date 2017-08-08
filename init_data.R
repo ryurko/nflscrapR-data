@@ -5,10 +5,9 @@
 
 devtools::install_github(repo = "maksimhorowitz/nflscrapR")
 
-# Access nflscrapR and the tidyverse:
+# Access nflscrapR:
 
 library(nflscrapR)
-library(tidyverse)
 
 # Using the season_play_by_play() function, create datasets
 # for each season:
@@ -22,7 +21,20 @@ pbp_2014 <- season_play_by_play(2014)
 pbp_2015 <- season_play_by_play(2015)
 pbp_2016 <- season_play_by_play(2016)
 
-# Each file is saved individually, omitted the code doing that
+# Access THE tidyverse:
+
+library(tidyverse)
+
+# Each file is saved individually
+write_csv(pbp_2009, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2009.csv")
+write_csv(pbp_2010, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2010.csv")
+write_csv(pbp_2011, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2011.csv")
+write_csv(pbp_2012, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2012.csv")
+write_csv(pbp_2013, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2013.csv")
+write_csv(pbp_2014, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2014.csv")
+write_csv(pbp_2015, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2015.csv")
+write_csv(pbp_2016, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2016.csv")
+
 
 # Bind the seasons together to make one dataset:
 
@@ -159,9 +171,6 @@ calc_receiving_splits <- function(splits,pbp_df) {
   return(rec_output)
 }
 
-# Due to the other J.Nelson on ARZ, change his name to JJ.Nelson:
-#pbp_data$Receiver <- with(pbp_data,ifelse(Receiver=="J.Nelson"&posteam=="ARI",
-#                                          "JJ.Nelson",Receiver))
 # For now just make LA be STL, and also JAX be JAC:
 pbp_data$posteam <- with(pbp_data,ifelse(posteam=="LA","STL",posteam))
 pbp_data$DefensiveTeam <- with(pbp_data,ifelse(DefensiveTeam=="LA","STL",DefensiveTeam))
@@ -181,6 +190,10 @@ season_rushing_df <- calc_rushing_splits(c("Season","Rusher_ID","posteam"), pbp_
   filter(Rusher_ID != "None") %>% arrange(Season,desc(Carries)) %>% rename(Team=posteam)
 
 # Save each file
+write_csv(season_passing_df, "~/Documents/nflscrapR-data/data/season_player_stats/season_passing_df.csv")
+write_csv(season_receiving_df, "~/Documents/nflscrapR-data/data/season_player_stats/season_receiving_df.csv")
+write_csv(season_rushing_df, "~/Documents/nflscrapR-data/data/season_player_stats/season_rushing_df.csv")
+
 
 # Game level:
 
@@ -196,6 +209,10 @@ game_rushing_df <- calc_rushing_splits(c("GameID","Rusher_ID","posteam","Defensi
   filter(Rusher_ID != "None") %>% arrange(GameID,desc(Carries))  %>% rename(Team=posteam,
                                                                        Opponent=DefensiveTeam)
 
+# Save each file
+write_csv(game_passing_df, "~/Documents/nflscrapR-data/data/game_player_stats/game_passing_df.csv")
+write_csv(game_receiving_df, "~/Documents/nflscrapR-data/data/game_player_stats/game_receiving_df.csv")
+write_csv(game_rushing_df, "~/Documents/nflscrapR-data/data/game_player_stats/game_rushing_df.csv")
 
 
 
