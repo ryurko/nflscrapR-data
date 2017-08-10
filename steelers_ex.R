@@ -163,11 +163,102 @@ pit_timeline_def <- ggplot(filter(team_passing_def,DefensiveTeam != "PIT"),aes(x
 gd <- ggplot_build(pit_timeline_def)
 gtd <- ggplot_gtable(gd)
 
-gtd$layout$clip[gt$layout$name=="panel"] <- "off"
+gtd$layout$clip[gtd$layout$name=="panel"] <- "off"
 
 grid.draw(gtd)
   
+# --------------------------------------------------------
+
+# Comparison of Big Ben to Brady
+league_passing$Player_Name <- "LeagueAverage"
+
+brady_ben_airEPA_comp <- ggplot(filter(season_passing_df,Player_Name != "B.Roethlisberger" & Player_Name !="T.Brady",Attempts >= 50),
+       aes(x=Season,y=airEPA_per_Comp,group=Player_Name)) + 
+  geom_line(color="lightgray",alpha=.5) + 
+  geom_line(data=league_passing,aes(x=Season,y=airEPA_per_Comp),color="blue",size=1) +
+  geom_line(data=filter(season_passing_df, Player_Name == "B.Roethlisberger"),
+            aes(x=Season,y=airEPA_per_Comp),color="black",size=1) + 
+  geom_line(data=filter(season_passing_df, Player_Name == "T.Brady"),
+            aes(x=Season,y=airEPA_per_Comp),color="red",size=1) + 
+  geom_hline(yintercept=0,linetype="dashed",color="red") + 
+  theme(panel.grid.minor = element_blank(),panel.grid.major.x = element_blank(),
+        panel.background = element_blank(), panel.border = element_blank(),
+        plot.margin = unit(c(1, 7, 2, 1), "lines"),
+        plot.title = element_text(size=20,face = 2),
+        plot.subtitle = element_text(size=16),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12)) +
+  geom_text(x=2010,y=.025,label="Positive Value Plays",color="blue") +
+  geom_text(x=2010,y=-.025,label="Negative Value Plays",color="red") +
+  labs(title="Big Ben vs Tom Brady with airEPA per Completion , 2009-2016",
+       caption = "Data from nflscrapR (Ron Yurko, Max Horowitz, Sam Ventura)\nDepartment of Statistics, Carnegie Mellon University") +
+  annotation_custom(grob = textGrob(label="Big Ben",hjust=0,
+                                    gp=gpar(fontsize=12,fontface=2,col="black")),xmin=2016,xmax = 2016,
+                    ymin=season_passing_df$airEPA_per_Comp[which(season_passing_df$Player_Name=="B.Roethlisberger" & season_passing_df$Season==2016)],
+                    ymax=season_passing_df$airEPA_per_Comp[which(season_passing_df$Player_Name=="B.Roethlisberger" & season_passing_df$Season==2016)]) +
+  annotation_custom(grob = textGrob(label="NFL Passing\n(Average)",hjust=0,vjust=1,
+                                    gp=gpar(fontsize=12,fontface=2,col="blue")),xmin=2016,xmax = 2016,
+                    ymin=league_passing$airEPA_per_Comp[which(league_passing$Season==2016)],
+                    ymax=league_passing$airEPA_per_Comp[which(league_passing$Season==2016)]) +
+  annotation_custom(grob = textGrob(label="Tom Brady",hjust=0,
+                                    gp=gpar(fontsize=12,fontface=2,col="red")),xmin=2016,xmax = 2016,
+                    ymin=season_passing_df$airEPA_per_Comp[which(season_passing_df$Player_Name=="T.Brady" & season_passing_df$Season==2016)],
+                    ymax=season_passing_df$airEPA_per_Comp[which(season_passing_df$Player_Name=="T.Brady" & season_passing_df$Season==2016)]) +
+  ylab("airEPA per Completion") + scale_x_continuous(breaks=c(2009:2016))
   
   
-  
+gd <- ggplot_build(brady_ben_airEPA_comp)
+gtd <- ggplot_gtable(gd)
+
+gtd$layout$clip[gtd$layout$name=="panel"] <- "off"
+
+grid.draw(gtd)
+
+
+brady_ben_EPA_comp <- ggplot(filter(season_passing_df,Player_Name != "B.Roethlisberger" & Player_Name !="T.Brady",Attempts >= 50),
+                                aes(x=Season,y=EPA_per_Comp,group=Player_Name)) + 
+  geom_line(color="lightgray",alpha=.5) + 
+  geom_line(data=league_passing,aes(x=Season,y=EPA_per_Comp),color="blue",size=1) +
+  geom_line(data=filter(season_passing_df, Player_Name == "B.Roethlisberger"),
+            aes(x=Season,y=EPA_per_Comp),color="black",size=1) + 
+  geom_line(data=filter(season_passing_df, Player_Name == "T.Brady"),
+            aes(x=Season,y=EPA_per_Comp),color="red",size=1) + 
+  geom_hline(yintercept=0,linetype="dashed",color="red") + 
+  theme(panel.grid.minor = element_blank(),panel.grid.major.x = element_blank(),
+        panel.background = element_blank(), panel.border = element_blank(),
+        plot.margin = unit(c(1, 7, 2, 1), "lines"),
+        plot.title = element_text(size=20,face = 2),
+        plot.subtitle = element_text(size=16),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12)) +
+  geom_text(x=2010,y=.025,label="Positive Value Plays",color="blue") +
+  geom_text(x=2010,y=-.025,label="Negative Value Plays",color="red") +
+  labs(title="Big Ben vs Tom Brady with EPA per Completion , 2009-2016",
+       caption = "Data from nflscrapR (Ron Yurko, Max Horowitz, Sam Ventura)\nDepartment of Statistics, Carnegie Mellon University") +
+  annotation_custom(grob = textGrob(label="Big Ben",hjust=0,
+                                    gp=gpar(fontsize=12,fontface=2,col="black")),xmin=2016,xmax = 2016,
+                    ymin=season_passing_df$EPA_per_Comp[which(season_passing_df$Player_Name=="B.Roethlisberger" & season_passing_df$Season==2016)],
+                    ymax=season_passing_df$EPA_per_Comp[which(season_passing_df$Player_Name=="B.Roethlisberger" & season_passing_df$Season==2016)]) +
+  annotation_custom(grob = textGrob(label="NFL Passing\n(Average)",hjust=0,vjust=1,
+                                    gp=gpar(fontsize=12,fontface=2,col="blue")),xmin=2016,xmax = 2016,
+                    ymin=league_passing$EPA_per_Comp[which(league_passing$Season==2016)],
+                    ymax=league_passing$EPA_per_Comp[which(league_passing$Season==2016)]) +
+  annotation_custom(grob = textGrob(label="Tom Brady",hjust=0,
+                                    gp=gpar(fontsize=12,fontface=2,col="red")),xmin=2016,xmax = 2016,
+                    ymin=season_passing_df$EPA_per_Comp[which(season_passing_df$Player_Name=="T.Brady" & season_passing_df$Season==2016)],
+                    ymax=season_passing_df$EPA_per_Comp[which(season_passing_df$Player_Name=="T.Brady" & season_passing_df$Season==2016)]) +
+  ylab("EPA per Completion") + scale_x_continuous(breaks=c(2009:2016))
+
+
+gd <- ggplot_build(brady_ben_EPA_comp)
+gtd <- ggplot_gtable(gd)
+
+gtd$layout$clip[gtd$layout$name=="panel"] <- "off"
+
+grid.draw(gtd)
+
 
