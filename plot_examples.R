@@ -34,6 +34,11 @@ ggplot(filter(season_passing_df,Season==2017 & Attempts >= 25),
   xlab("airEPA Completions Success Rate") + ylab("Success Rate") + theme_bw() +
   labs(title="Relationship Between Success Rate and airEPA Completions Success Rate for Passing in 2017 \n(min 25 attempts)")
 
+ggplot(filter(season_passing_df,Season==2017 & Attempts >= 25),
+       aes(x=air_Success_Rate, y=Success_Rate)) + geom_text(aes(label=Player_Name)) +
+  xlab("airEPA Success Rate") + ylab("Success Rate") + theme_bw() +
+  labs(title="Relationship Between Success Rate and airEPA Success Rate for Passing in 2017 \n(min 25 attempts)")
+
 
 ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
        aes(x=air_Success_Rate, y=Success_Rate)) + geom_text(aes(label=Player_Name)) +
