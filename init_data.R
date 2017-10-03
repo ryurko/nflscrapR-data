@@ -20,6 +20,7 @@ pbp_2013 <- season_play_by_play(2013)
 pbp_2014 <- season_play_by_play(2014)
 pbp_2015 <- season_play_by_play(2015)
 pbp_2016 <- season_play_by_play(2016)
+pbp_2017 <- season_play_by_play(2017)
 
 # Access THE tidyverse:
 
@@ -34,13 +35,14 @@ write_csv(pbp_2013, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_201
 write_csv(pbp_2014, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2014.csv")
 write_csv(pbp_2015, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2015.csv")
 write_csv(pbp_2016, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2016.csv")
+write_csv(pbp_2017, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2017.csv")
 
 
 # Bind the seasons together to make one dataset:
 
 pbp_data <- bind_rows(pbp_2009, pbp_2010, pbp_2011,
                       pbp_2012, pbp_2013, pbp_2014,
-                      pbp_2015, pbp_2016)
+                      pbp_2015, pbp_2016, pbp_2017)
 
 # Helper function to return the player's most common
 # name associated with the ID:
@@ -172,8 +174,8 @@ calc_receiving_splits <- function(splits,pbp_df) {
 }
 
 # For now just make LA be STL, and also JAX be JAC:
-pbp_data$posteam <- with(pbp_data,ifelse(posteam=="LA","STL",posteam))
-pbp_data$DefensiveTeam <- with(pbp_data,ifelse(DefensiveTeam=="LA","STL",DefensiveTeam))
+#pbp_data$posteam <- with(pbp_data,ifelse(posteam=="LA","STL",posteam))
+#pbp_data$DefensiveTeam <- with(pbp_data,ifelse(DefensiveTeam=="LA","STL",DefensiveTeam))
 pbp_data$posteam <- with(pbp_data,ifelse(posteam=="JAX","JAC",posteam))
 pbp_data$DefensiveTeam <- with(pbp_data,ifelse(DefensiveTeam=="JAX","JAC",DefensiveTeam))
 

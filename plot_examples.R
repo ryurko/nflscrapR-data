@@ -2,6 +2,16 @@ library(tidyverse)
 library(ggplot2)
 
 # Using the season_passing_df, view the relationship between
+# passing Success Rate and Clutch EPA in 2017:
+
+ggplot(filter(season_passing_df,Season==2017, Attempts >=25),
+       aes(x=Success_Rate, y=Total_Clutch_EPA)) + geom_text(aes(label=Player_Name)) +
+  geom_smooth(method="lm") +
+  xlab("Success Rate") + ylab("Total Clutch EPA") + theme_bw() +
+  labs(title="Relationship Between Clutch EPA and Success Rate for Passing in 2017 \n(min 25 attempts)")
+
+
+# Using the season_passing_df, view the relationship between
 # passing Success Rate and Clutch EPA in 2016:
 
 ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
@@ -18,11 +28,20 @@ ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
   xlab("airEPA Completions Success Rate") + ylab("Success Rate") + theme_bw() +
   labs(title="Relationship Between Success Rate and airEPA Completions Success Rate for Passing in 2016 \n(min 100 attempts)")
 
+ggplot(filter(season_passing_df,Season==2017 & Attempts >= 25),
+       aes(x=air_Comp_Success_Rate, y=Success_Rate)) + geom_text(aes(label=Player_Name)) +
+  geom_smooth(method="lm") +
+  xlab("airEPA Completions Success Rate") + ylab("Success Rate") + theme_bw() +
+  labs(title="Relationship Between Success Rate and airEPA Completions Success Rate for Passing in 2017 \n(min 25 attempts)")
+
+
 ggplot(filter(season_passing_df,Season==2016 & Attempts >= 100),
        aes(x=air_Success_Rate, y=Success_Rate)) + geom_text(aes(label=Player_Name)) +
   geom_smooth(method="lm") +
   xlab("airEPA Success Rate") + ylab("Success Rate") + theme_bw() +
   labs(title="Relationship Between Success Rate and airEPA Success Rate for Passing in 2016 \n(min 100 attempts)")
+
+
 
 # Using the season_rushing_df:
 

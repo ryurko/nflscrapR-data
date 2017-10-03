@@ -12,6 +12,7 @@ Within the data folder are 3 folders containing .csv files to download.  To down
 * [2014 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2014.csv)
 * [2015 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2015.csv)
 * [2016 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2016.csv)
+* [2017 play-by-play](https://github.com/ryurko/nflscrapR-data/blob/master/data/season_play_by_play/pbp_2017.csv)
 
 
 The season_play_by_play folder contains play-by-play datasets for each regular season game in each season from 2009-2016.  The files are separated by season. Each dataset contains 100 columns (see the nflscrapR game_play_by_play() and season_play_by_play() function documentation for descriptions).
