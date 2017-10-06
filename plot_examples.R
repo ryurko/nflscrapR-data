@@ -56,6 +56,14 @@ ggplot(filter(season_rushing_df,Season==2016 & Carries >= 50),
   xlab("Success Rate") + ylab("Total Clutch EPA") + theme_bw() +
   labs(title="Relationship Between Clutch EPA and Success Rate for Rushing in 2016 \n(min 50 attempts)")
 
+ggplot(filter(season_rushing_df,Season==2017 & Carries >= 25),
+       aes(y=Success_Rate, x=EPA_per_Car)) + geom_text(aes(label=Player_Name)) +
+  geom_smooth(method="lm") +
+  ylab("Success Rate") + xlab("EPA per Carry") + theme_bw() +
+  labs(title="Relationship Between Success Rate and EPA per Carry and for Rushing in 2017 \n(min 25 attempts)",
+       caption= "Data from nflscrapR")
+
+
 # Using the season_receiving_df:
 
 ggplot(filter(season_receiving_df, Season==2016 & Receptions >= 25),
