@@ -1,6 +1,8 @@
 # nflscrapR Data Files
 
-Within the data folder are 3 folders containing .csv files to download.  To download a dataset, click on it then right click on the Download button to save the file.
+Within the data folder are 3 folders containing .csv files to download.  To download a play-by-play dataset, click on it then right click on the Download button, and use save link as to save the file.
+
+For the team and player season/game stats, click on it then right click on the Raw button, , and use save link as to save the file.
 
 # Season Play-by-play
 
