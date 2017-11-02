@@ -1,5 +1,4 @@
 library(tidyverse)
-library(ggplot2)
 
 # Using the season_passing_df, view the relationship between
 # passing Success Rate and Clutch EPA in 2017:
@@ -9,6 +8,27 @@ ggplot(filter(season_passing_df,Season==2017, Attempts >=25),
   geom_smooth(method="lm") +
   xlab("Success Rate") + ylab("Total Clutch EPA") + theme_bw() +
   labs(title="Relationship Between Clutch EPA and Success Rate for Passing in 2017 \n(min 25 attempts)")
+
+# View EPA per drive:
+ggplot(filter(season_passing_df, Season == 2017, Attempts >=50),
+       aes(x = Success_Rate, y = EPA_per_Drive)) + geom_text(aes(label=Player_Name)) +
+  xlab("Success Rate") + ylab("EPA per Drive") + theme_bw() + geom_smooth(method = "lm") +
+  labs(title="Relationship Between EPA per Drive and Success Rate for Passing in 2017 \n(min 50 attempts)",
+       caption = "Data from nflscrapR")
+
+ggplot(filter(season_receiving_df, Season == 2017, Targets >=25),
+       aes(x = Targets_per_Drive, y = EPA_per_Drives)) + geom_text(aes(label=Player_Name)) +
+  xlab("Targets per Drive") + ylab("EPA per Drive") + theme_bw() + geom_hline(yintercept = 0,color="red",
+                                                                              linetype="dashed") +
+  labs(title="Relationship Between EPA per Drive and Targets per Drive for Receiving in 2017 \n(min 25 targets)",
+       caption = "Data from nflscrapR")
+
+ggplot(filter(season_rushing_df, Season == 2017, Carries >=25),
+       aes(x = Car_per_Drive, y = EPA_per_Drive)) + geom_text(aes(label=Player_Name)) +
+  xlab("Carries per Drive") + ylab("EPA per Drive") + theme_bw() + geom_hline(yintercept = 0,color="red",
+                                                                              linetype="dashed") +
+  labs(title="Relationship Between EPA per Drive and Carries per Drive for Rushing in 2017 \n(min 25 carries)",
+       caption = "Data from nflscrapR")
 
 
 # Using the season_passing_df, view the relationship between

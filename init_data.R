@@ -133,6 +133,7 @@ calc_rushing_splits <- function(splits,pbp_df) {
     summarise(Player_Name = find_player_name(Rusher[which(!is.na(Rusher))]),
               Carries = n(),
               Drives = n_distinct(GameDrive),
+              Car_per_Drive = Carries / Drives,
               Total_Yards = sum(Yards.Gained,na.rm = TRUE),
               Yards_per_Car = Total_Yards / Carries,
               Yards_per_Drive = Total_Yards / Drives,
