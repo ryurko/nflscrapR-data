@@ -3,7 +3,7 @@ library(tidyverse)
 # Using the season_passing_df, view the relationship between
 # passing Success Rate and Clutch EPA in 2017:
 
-ggplot(filter(season_passing_df,Season==2017, Attempts >=25),
+ggplot(filter(season_passing_df,Season==2017, Attempts >=100),
        aes(x=Success_Rate, y=Total_Clutch_EPA)) + geom_text(aes(label=Player_Name)) +
   geom_smooth(method="lm") +
   xlab("Success Rate") + ylab("Total Clutch EPA") + theme_bw() +
