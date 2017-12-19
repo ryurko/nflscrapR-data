@@ -266,10 +266,23 @@ team_season_receiving_df <- calc_receiving_splits(c("Season","posteam"), pbp_dat
 team_season_rushing_df <- calc_rushing_splits(c("Season","posteam"), pbp_data) %>%
   arrange(Season,desc(Carries)) %>% rename(Team=posteam)
 
+team_def_season_passing_df <- calc_passing_splits(c("Season","DefensiveTeam"), pbp_data) %>% 
+  arrange(Season,desc(Attempts)) %>% rename(Team=DefensiveTeam)
+
+team_def_season_receiving_df <- calc_receiving_splits(c("Season","DefensiveTeam"), pbp_data) %>% 
+  arrange(Season,desc(Targets)) %>% rename(Team=DefensiveTeam)
+
+team_def_season_rushing_df <- calc_rushing_splits(c("Season","DefensiveTeam"), pbp_data) %>%
+  arrange(Season,desc(Carries)) %>% rename(Team=DefensiveTeam)
+
+
 # Save each file
 write_csv(team_season_passing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_season_passing_df.csv")
 write_csv(team_season_receiving_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_season_receiving_df.csv")
 write_csv(team_season_rushing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_season_rushing_df.csv")
+write_csv(team_def_season_passing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_def_season_passing_df.csv")
+write_csv(team_def_season_receiving_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_def_season_receiving_df.csv")
+write_csv(team_def_season_rushing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_def_season_rushing_df.csv")
 
 
 # Game level:
