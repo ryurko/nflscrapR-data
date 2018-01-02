@@ -81,11 +81,13 @@ calc_passing_splits <- function(splits,pbp_df) {
               Comp_AirYards_per_Comp = Total_Comp_AirYards / Completions,
               Raw_AirYards_per_Drive = Total_Raw_AirYards / Drives,
               Comp_AirYards_per_Drive = Total_Comp_AirYards / Drives,
+              PACR = Total_Yards / Total_Raw_AirYards,
               TimesHit = sum(QBHit,na.rm=TRUE),
               TimesHit_per_Drive = TimesHit / Drives,
               Interceptions = sum(InterceptionThrown,na.rm = TRUE),
               TDs = sum(Touchdown,na.rm=TRUE),
               Air_TDs = sum(as.numeric(YardsAfterCatch==0)*Touchdown,na.rm=TRUE),
+              aPACR = (Total_Yards + (20 * TDs) - (45 * Interceptions)) / Total_Raw_AirYards,
               Air_TD_Rate = Air_TDs / TDs,
               TD_to_Int = TDs / Interceptions,
               Total_EPA = sum(EPA,na.rm=TRUE),
@@ -242,6 +244,7 @@ calc_receiving_splits <- function(splits,pbp_df) {
               Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE),
               Clutch_EPA_per_Drive = Total_Clutch_EPA / Drives,
               Total_Raw_AirYards = sum(AirYards,na.rm=TRUE),
+              PACR = Total_Yards / Total_Raw_AirYards,
               Total_Caught_AirYards = sum(Reception*AirYards, na.rm=TRUE),
               Raw_AirYards_per_Target = Total_Raw_AirYards / Targets,
               Total_Raw_airEPA = sum(airEPA, na.rm=TRUE),
@@ -366,5 +369,79 @@ team_game_rushing_df <- calc_rushing_splits(c("GameID","posteam","DefensiveTeam"
 write_csv(team_game_passing_df, "~/Documents/nflscrapR-data/data/game_team_stats/game_passing_df.csv")
 write_csv(team_game_receiving_df, "~/Documents/nflscrapR-data/data/game_team_stats/game_receiving_df.csv")
 write_csv(team_game_rushing_df, "~/Documents/nflscrapR-data/data/game_team_stats/game_rushing_df.csv")
+
+# Team rosters:
+
+# Create a dataset for each season and a vector of the team abbreviations for season:
+pbp_data_09 <- filter(pbp_data, Season == 2009)
+pbp_data_10 <- filter(pbp_data, Season == 2010)
+pbp_data_11 <- filter(pbp_data, Season == 2011)
+pbp_data_12 <- filter(pbp_data, Season == 2012)
+pbp_data_13 <- filter(pbp_data, Season == 2013)
+pbp_data_14 <- filter(pbp_data, Season == 2014)
+pbp_data_15 <- filter(pbp_data, Season == 2015)
+pbp_data_16 <- filter(pbp_data, Season == 2016)
+pbp_data_17 <- filter(pbp_data, Season == 2017)
+
+team_ids_09 <- as.character(na.omit(unique(pbp_data_09$posteam)))
+team_ids_10 <- as.character(na.omit(unique(pbp_data_10$posteam)))
+team_ids_11 <- as.character(na.omit(unique(pbp_data_11$posteam)))
+team_ids_12 <- as.character(na.omit(unique(pbp_data_12$posteam)))
+team_ids_13 <- as.character(na.omit(unique(pbp_data_13$posteam)))
+team_ids_14 <- as.character(na.omit(unique(pbp_data_14$posteam)))
+team_ids_15 <- as.character(na.omit(unique(pbp_data_15$posteam)))
+team_ids_16 <- as.character(na.omit(unique(pbp_data_16$posteam)))
+team_ids_17 <- as.character(na.omit(unique(pbp_data_17$posteam)))
+
+# Adjust the 2016 ids:
+team_ids_16[which(team_ids_16 == "JAC")] <- "JAX"
+team_ids_16 <- unique(team_ids_16)
+
+# Find the rosters for each team and season:
+team_2009_rosters <- lapply(team_ids_09, function(x) season_rosters(2009,x)) %>% bind_rows()
+team_2010_rosters <- lapply(team_ids_10, function(x) season_rosters(2010,x)) %>% bind_rows()
+team_2011_rosters <- lapply(team_ids_11, function(x) season_rosters(2011,x)) %>% bind_rows()
+team_2012_rosters <- lapply(team_ids_12, function(x) season_rosters(2012,x)) %>% bind_rows()
+team_2013_rosters <- lapply(team_ids_13, function(x) season_rosters(2013,x)) %>% bind_rows()
+team_2014_rosters <- lapply(team_ids_14, function(x) season_rosters(2014,x)) %>% bind_rows()
+team_2015_rosters <- lapply(team_ids_15, function(x) season_rosters(2015,x)) %>% bind_rows()
+team_2016_rosters <- lapply(team_ids_16, function(x) season_rosters(2016,x)) %>% bind_rows()
+team_2017_rosters <- lapply(team_ids_17, function(x) season_rosters(2017,x)) %>% bind_rows()
+
+# Save these files:
+write_csv(team_2009_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2009_rosters.csv")
+write_csv(team_2010_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2010_rosters.csv")
+write_csv(team_2011_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2011_rosters.csv")
+write_csv(team_2012_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2012_rosters.csv")
+write_csv(team_2013_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2013_rosters.csv")
+write_csv(team_2014_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2014_rosters.csv")
+write_csv(team_2015_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2015_rosters.csv")
+write_csv(team_2016_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2016_rosters.csv")
+write_csv(team_2017_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2017_rosters.csv")
+
+
+# Create datasets with the results of each game:
+# (this takes some time to run)
+
+games_2009 <- season_games(2009) %>% mutate(Season = 2009)
+games_2010 <- season_games(2010) %>% mutate(Season = 2010)
+games_2011 <- season_games(2011) %>% mutate(Season = 2011)
+games_2012 <- season_games(2012) %>% mutate(Season = 2012)
+games_2013 <- season_games(2013) %>% mutate(Season = 2013)
+games_2014 <- season_games(2014) %>% mutate(Season = 2014)
+games_2015 <- season_games(2015) %>% mutate(Season = 2015)
+games_2016 <- season_games(2016) %>% mutate(Season = 2016)
+games_2017 <- season_games(2017) %>% mutate(Season = 2017)
+
+# Save these files:
+write_csv(games_2009, "~/Documents/nflscrapR-data/data/season_games/games_2009.csv")
+write_csv(games_2010, "~/Documents/nflscrapR-data/data/season_games/games_2010.csv")
+write_csv(games_2011, "~/Documents/nflscrapR-data/data/season_games/games_2011.csv")
+write_csv(games_2012, "~/Documents/nflscrapR-data/data/season_games/games_2012.csv")
+write_csv(games_2013, "~/Documents/nflscrapR-data/data/season_games/games_2013.csv")
+write_csv(games_2014, "~/Documents/nflscrapR-data/data/season_games/games_2014.csv")
+write_csv(games_2015, "~/Documents/nflscrapR-data/data/season_games/games_2015.csv")
+write_csv(games_2016, "~/Documents/nflscrapR-data/data/season_games/games_2016.csv")
+write_csv(games_2017, "~/Documents/nflscrapR-data/data/season_games/games_2017.csv")
 
 
