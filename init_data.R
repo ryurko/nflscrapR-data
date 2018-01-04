@@ -397,16 +397,61 @@ team_ids_17 <- as.character(na.omit(unique(pbp_data_17$posteam)))
 team_ids_16[which(team_ids_16 == "JAC")] <- "JAX"
 team_ids_16 <- unique(team_ids_16)
 
-# Find the rosters for each team and season:
-team_2009_rosters <- lapply(team_ids_09, function(x) season_rosters(2009,x)) %>% bind_rows()
-team_2010_rosters <- lapply(team_ids_10, function(x) season_rosters(2010,x)) %>% bind_rows()
-team_2011_rosters <- lapply(team_ids_11, function(x) season_rosters(2011,x)) %>% bind_rows()
-team_2012_rosters <- lapply(team_ids_12, function(x) season_rosters(2012,x)) %>% bind_rows()
-team_2013_rosters <- lapply(team_ids_13, function(x) season_rosters(2013,x)) %>% bind_rows()
-team_2014_rosters <- lapply(team_ids_14, function(x) season_rosters(2014,x)) %>% bind_rows()
-team_2015_rosters <- lapply(team_ids_15, function(x) season_rosters(2015,x)) %>% bind_rows()
-team_2016_rosters <- lapply(team_ids_16, function(x) season_rosters(2016,x)) %>% bind_rows()
-team_2017_rosters <- lapply(team_ids_17, function(x) season_rosters(2017,x)) %>% bind_rows()
+# Find the rosters for each team and season,
+# first for 2009 (do positions separately in case NFL doens't work):
+qbs_2009 <- season_rosters(2009, teams = team_ids_09, positions = "QUARTERBACK")
+rbs_2009 <- season_rosters(2009, team_ids_09, positions = "RUNNING_BACK")
+wrs_2009 <- season_rosters(2009, team_ids_09, positions = "WIDE_RECEIVER")
+tes_2009 <- season_rosters(2009, team_ids_09, positions = "TIGHT_END")
+team_2009_rosters <- bind_rows(qbs_2009, rbs_2009, wrs_2009, tes_2009)
+
+qbs_2010 <- season_rosters(2010, teams = team_ids_10, positions = "QUARTERBACK")
+rbs_2010 <- season_rosters(2010, team_ids_10, positions = "RUNNING_BACK")
+wrs_2010 <- season_rosters(2010, team_ids_10, positions = "WIDE_RECEIVER")
+tes_2010 <- season_rosters(2010, team_ids_10, positions = "TIGHT_END")
+team_2010_rosters <- bind_rows(qbs_2010, rbs_2010, wrs_2010, tes_2010)
+
+qbs_2011 <- season_rosters(2011, teams = team_ids_11, positions = "QUARTERBACK")
+rbs_2011 <- season_rosters(2011, team_ids_11, positions = "RUNNING_BACK")
+wrs_2011 <- season_rosters(2011, team_ids_11, positions = "WIDE_RECEIVER")
+tes_2011 <- season_rosters(2011, team_ids_11, positions = "TIGHT_END")
+team_2011_rosters <- bind_rows(qbs_2011, rbs_2011, wrs_2011, tes_2011)
+
+qbs_2012 <- season_rosters(2012, teams = team_ids_12, positions = "QUARTERBACK")
+rbs_2012 <- season_rosters(2012, team_ids_12, positions = "RUNNING_BACK")
+wrs_2012 <- season_rosters(2012, team_ids_12, positions = "WIDE_RECEIVER")
+tes_2012 <- season_rosters(2012, team_ids_12, positions = "TIGHT_END")
+team_2012_rosters <- bind_rows(qbs_2012, rbs_2012, wrs_2012, tes_2012)
+
+qbs_2013 <- season_rosters(2013, teams = team_ids_13, positions = "QUARTERBACK")
+rbs_2013 <- season_rosters(2013, team_ids_13, positions = "RUNNING_BACK")
+wrs_2013 <- season_rosters(2013, team_ids_13, positions = "WIDE_RECEIVER")
+tes_2013 <- season_rosters(2013, team_ids_13, positions = "TIGHT_END")
+team_2013_rosters <- bind_rows(qbs_2013, rbs_2013, wrs_2013, tes_2013)
+
+qbs_2014 <- season_rosters(2014, teams = team_ids_14, positions = "QUARTERBACK")
+rbs_2014 <- season_rosters(2014, team_ids_14, positions = "RUNNING_BACK")
+wrs_2014 <- season_rosters(2014, team_ids_14, positions = "WIDE_RECEIVER")
+tes_2014 <- season_rosters(2014, team_ids_14, positions = "TIGHT_END")
+team_2014_rosters <- bind_rows(qbs_2014, rbs_2014, wrs_2014, tes_2014)
+
+qbs_2015 <- season_rosters(2015, teams = team_ids_15, positions = "QUARTERBACK")
+rbs_2015 <- season_rosters(2015, team_ids_15, positions = "RUNNING_BACK")
+wrs_2015 <- season_rosters(2015, team_ids_15, positions = "WIDE_RECEIVER")
+tes_2015 <- season_rosters(2015, team_ids_15, positions = "TIGHT_END")
+team_2015_rosters <- bind_rows(qbs_2015, rbs_2015, wrs_2015, tes_2015)
+
+qbs_2016 <- season_rosters(2016, teams = team_ids_16, positions = "QUARTERBACK")
+rbs_2016 <- season_rosters(2016, team_ids_16, positions = "RUNNING_BACK")
+wrs_2016 <- season_rosters(2016, team_ids_16, positions = "WIDE_RECEIVER")
+tes_2016 <- season_rosters(2016, team_ids_16, positions = "TIGHT_END")
+team_2016_rosters <- bind_rows(qbs_2016, rbs_2016, wrs_2016, tes_2016)
+
+qbs_2017 <- season_rosters(2017, teams = team_ids_17, positions = "QUARTERBACK")
+rbs_2017 <- season_rosters(2017, team_ids_17, positions = "RUNNING_BACK")
+wrs_2017 <- season_rosters(2017, team_ids_17, positions = "WIDE_RECEIVER")
+tes_2017 <- season_rosters(2017, team_ids_17, positions = "TIGHT_END")
+team_2017_rosters <- bind_rows(qbs_2017, rbs_2017, wrs_2017, tes_2017)
 
 # Save these files:
 write_csv(team_2009_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2009_rosters.csv")
@@ -418,7 +463,6 @@ write_csv(team_2014_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_
 write_csv(team_2015_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2015_rosters.csv")
 write_csv(team_2016_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2016_rosters.csv")
 write_csv(team_2017_rosters, "~/Documents/nflscrapR-data/data/team_rosters/team_2017_rosters.csv")
-
 
 # Create datasets with the results of each game:
 # (this takes some time to run)
