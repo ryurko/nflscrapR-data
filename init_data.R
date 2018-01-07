@@ -9,18 +9,68 @@ devtools::install_github(repo = "maksimhorowitz/nflscrapR")
 
 library(nflscrapR)
 
-# Using the season_play_by_play() function, create datasets
-# for each season:
+# Extract the game IDs for each season then use the purrr package
+# to get the season data. This is done instead of the season_play_by_play()
+# function to avoid the times when the NFL hates us and prevents the URL
+# from being accessed. So I did it this way to ensure I would get all 
+# the games in a season.
 
-pbp_2009 <- season_play_by_play(2009)
-pbp_2010 <- season_play_by_play(2010)
-pbp_2011 <- season_play_by_play(2011)
-pbp_2012 <- season_play_by_play(2012)
-pbp_2013 <- season_play_by_play(2013)
-pbp_2014 <- season_play_by_play(2014)
-pbp_2015 <- season_play_by_play(2015)
-pbp_2016 <- season_play_by_play(2016)
-pbp_2017 <- season_play_by_play(2017)
+game_ids_09 <- extracting_gameids(2009)
+game_ids_10 <- extracting_gameids(2010)
+game_ids_11 <- extracting_gameids(2011)
+game_ids_12 <- extracting_gameids(2012)
+game_ids_13 <- extracting_gameids(2013)
+game_ids_14 <- extracting_gameids(2014)
+game_ids_15 <- extracting_gameids(2015)
+game_ids_16 <- extracting_gameids(2016)
+game_ids_17 <- extracting_gameids(2017)
+
+# Now get each season's play-by-play by mapping the game_play_by_play() 
+# function to each game id (and check there are 256 unique ids)
+
+# Access magrittr:
+# install_packages("magrittr")
+library(magrittr)
+
+# Install purrr and dplyr:
+#  install_packages("purrr")
+#  install_packages("dplyr")
+
+pbp_2009 <- purrr::map_dfr(game_ids_09, game_play_by_play) %>%
+  dplyr::mutate(Season = 2009)
+length(unique(pbp_2009$GameID)) == 256
+
+pbp_2010 <- purrr::map_dfr(game_ids_10, game_play_by_play) %>%
+  dplyr::mutate(Season = 2010)
+length(unique(pbp_2010$GameID)) == 256
+
+pbp_2011 <- purrr::map_dfr(game_ids_11, game_play_by_play) %>%
+  dplyr::mutate(Season = 2011)
+length(unique(pbp_2011$GameID)) == 256
+
+pbp_2012 <- purrr::map_dfr(game_ids_12, game_play_by_play) %>%
+  dplyr::mutate(Season = 2012)
+length(unique(pbp_2012$GameID)) == 256
+
+pbp_2013 <- purrr::map_dfr(game_ids_13, game_play_by_play) %>%
+  dplyr::mutate(Season = 2013)
+length(unique(pbp_2013$GameID)) == 256
+
+pbp_2014 <- purrr::map_dfr(game_ids_14, game_play_by_play) %>%
+  dplyr::mutate(Season = 2014)
+length(unique(pbp_2014$GameID)) == 256
+
+pbp_2015 <- purrr::map_dfr(game_ids_15, game_play_by_play) %>%
+  dplyr::mutate(Season = 2015)
+length(unique(pbp_2015$GameID)) == 256
+
+pbp_2016 <- purrr::map_dfr(game_ids_16, game_play_by_play) %>%
+  dplyr::mutate(Season = 2016)
+length(unique(pbp_2016$GameID)) == 256
+
+pbp_2017 <- purrr::map_dfr(game_ids_17, game_play_by_play) %>%
+  dplyr::mutate(Season = 2017)
+length(unique(pbp_2017$GameID)) == 256
 
 # Access THE tidyverse:
 
