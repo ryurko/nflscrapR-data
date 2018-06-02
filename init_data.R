@@ -72,33 +72,98 @@ pbp_2017 <- purrr::map_dfr(game_ids_17, game_play_by_play) %>%
   dplyr::mutate(Season = 2017)
 length(unique(pbp_2017$GameID)) == 256
 
-# Access THE tidyverse:
-
+# Access the tidyverse:
+# install.packages("tidyverse")
 library(tidyverse)
 
 # Each file is saved individually
-write_csv(pbp_2009, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2009.csv")
-write_csv(pbp_2010, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2010.csv")
-write_csv(pbp_2011, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2011.csv")
-write_csv(pbp_2012, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2012.csv")
-write_csv(pbp_2013, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2013.csv")
-write_csv(pbp_2014, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2014.csv")
-write_csv(pbp_2015, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2015.csv")
-write_csv(pbp_2016, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2016.csv")
-write_csv(pbp_2017, "~/Documents/nflscrapR-data/data/season_play_by_play/pbp_2017.csv")
+write_csv(pbp_2009, "data/season_play_by_play/pbp_2009.csv")
+write_csv(pbp_2010, "data/season_play_by_play/pbp_2010.csv")
+write_csv(pbp_2011, "data/season_play_by_play/pbp_2011.csv")
+write_csv(pbp_2012, "data/season_play_by_play/pbp_2012.csv")
+write_csv(pbp_2013, "data/season_play_by_play/pbp_2013.csv")
+write_csv(pbp_2014, "data/season_play_by_play/pbp_2014.csv")
+write_csv(pbp_2015, "data/season_play_by_play/pbp_2015.csv")
+write_csv(pbp_2016, "data/season_play_by_play/pbp_2016.csv")
+write_csv(pbp_2017, "data/season_play_by_play/pbp_2017.csv")
+
+# Same thing for playoffs:
+
+playoff_ids_09 <- extracting_gameids(2009, playoffs = TRUE)
+playoff_ids_10 <- extracting_gameids(2010, playoffs = TRUE)
+playoff_ids_11 <- extracting_gameids(2011, playoffs = TRUE)
+playoff_ids_12 <- extracting_gameids(2012, playoffs = TRUE)
+playoff_ids_13 <- extracting_gameids(2013, playoffs = TRUE)
+playoff_ids_14 <- extracting_gameids(2014, playoffs = TRUE)
+playoff_ids_15 <- extracting_gameids(2015, playoffs = TRUE)
+playoff_ids_16 <- extracting_gameids(2016, playoffs = TRUE)
+playoff_ids_17 <- extracting_gameids(2017, playoffs = TRUE)
+
+playoff_pbp_2009 <- purrr::map_dfr(playoff_ids_09, game_play_by_play) %>%
+  dplyr::mutate(Season = 2009)
+length(unique(playoff_pbp_2009$GameID)) == 12
+
+playoff_pbp_2010 <- purrr::map_dfr(playoff_ids_10, game_play_by_play) %>%
+  dplyr::mutate(Season = 2010)
+length(unique(playoff_pbp_2010$GameID)) == 12
+
+playoff_pbp_2011 <- purrr::map_dfr(playoff_ids_11, game_play_by_play) %>%
+  dplyr::mutate(Season = 2011)
+length(unique(playoff_pbp_2011$GameID)) == 12
+
+playoff_pbp_2012 <- purrr::map_dfr(playoff_ids_12, game_play_by_play) %>%
+  dplyr::mutate(Season = 2012)
+length(unique(playoff_pbp_2012$GameID)) == 12
+
+playoff_pbp_2013 <- purrr::map_dfr(playoff_ids_13, game_play_by_play) %>%
+  dplyr::mutate(Season = 2013)
+length(unique(playoff_pbp_2013$GameID)) == 12
+
+playoff_pbp_2014 <- purrr::map_dfr(playoff_ids_14, game_play_by_play) %>%
+  dplyr::mutate(Season = 2014)
+length(unique(playoff_pbp_2014$GameID)) == 12
+
+playoff_pbp_2015 <- purrr::map_dfr(playoff_ids_15, game_play_by_play) %>%
+  dplyr::mutate(Season = 2015)
+length(unique(playoff_pbp_2015$GameID)) == 12
+
+playoff_pbp_2016 <- purrr::map_dfr(playoff_ids_16, game_play_by_play) %>%
+  dplyr::mutate(Season = 2016)
+length(unique(playoff_pbp_2016$GameID)) == 12
+
+playoff_pbp_2017 <- purrr::map_dfr(playoff_ids_17, game_play_by_play) %>%
+  dplyr::mutate(Season = 2017)
+length(unique(playoff_pbp_2017$GameID)) == 12
+
+# Each file is saved individually
+write_csv(playoff_pbp_2009, "data/playoff_play_by_play/playoff_pbp_2009.csv")
+write_csv(playoff_pbp_2010, "data/playoff_play_by_play/playoff_pbp_2010.csv")
+write_csv(playoff_pbp_2011, "data/playoff_play_by_play/playoff_pbp_2011.csv")
+write_csv(playoff_pbp_2012, "data/playoff_play_by_play/playoff_pbp_2012.csv")
+write_csv(playoff_pbp_2013, "data/playoff_play_by_play/playoff_pbp_2013.csv")
+write_csv(playoff_pbp_2014, "data/playoff_play_by_play/playoff_pbp_2014.csv")
+write_csv(playoff_pbp_2015, "data/playoff_play_by_play/playoff_pbp_2015.csv")
+write_csv(playoff_pbp_2016, "data/playoff_play_by_play/playoff_pbp_2016.csv")
+write_csv(playoff_pbp_2017, "data/playoff_play_by_play/playoff_pbp_2017.csv")
 
 
 # Bind the seasons together to make one dataset:
-
 pbp_data <- bind_rows(pbp_2009, pbp_2010, pbp_2011,
                       pbp_2012, pbp_2013, pbp_2014,
                       pbp_2015, pbp_2016, pbp_2017)
+
+# Bind playoffs together to make one dataset:
+playoff_pbp_data <- bind_rows(playoff_pbp_2009, playoff_pbp_2010, 
+                              playoff_pbp_2011, playoff_pbp_2012, 
+                              playoff_pbp_2013, playoff_pbp_2014,
+                              playoff_pbp_2015, playoff_pbp_2016,
+                              playoff_pbp_2017)
 
 # Helper function to return the player's most common
 # name associated with the ID:
 
 find_player_name <- function(player_names){
-  if (length(player_names)==0){
+  if (length(player_names) == 0) {
     result <- "None"
   } else{
     table_name <- table(player_names)
@@ -113,7 +178,7 @@ calc_passing_splits <- function(splits,pbp_df) {
   split_groups <- lapply(splits, as.symbol)
   # Filter to only pass attempts and add the GameDrive column:
   pbp_df <- pbp_df %>% filter(PassAttempt == 1 & PlayType != "No Play") %>%
-    mutate(GameDrive = paste(as.character(GameID), as.character(Drive),sep="-"))
+    mutate(GameDrive = paste(as.character(GameID), as.character(Drive), sep = "-"))
   pass_output <- pbp_df %>% group_by_(.dots=split_groups) %>%
     summarise(Player_Name = find_player_name(Passer[which(!is.na(Passer))]),
               Attempts = n(),Completions = sum(Reception,na.rm=TRUE),
@@ -163,19 +228,21 @@ calc_passing_splits <- function(splits,pbp_df) {
               Total_Clutch_EPA = sum(EPA*abs(WPA),na.rm=TRUE),
               Clutch_EPA_per_Att = Total_Clutch_EPA / Attempts,
               Clutch_EPA_per_Drive = Total_Clutch_EPA / Drives,
-              airEPA_Comp = sum(Reception*airEPA,na.rm=TRUE),
-              airEPA_Incomp = sum(as.numeric(Reception==0)*airEPA,na.rm=TRUE),
-              Total_Raw_airEPA = sum(airEPA,na.rm=TRUE),
+              airEPA_Comp = sum(Reception*airEPA,na.rm = TRUE),
+              airEPA_Incomp = sum(as.numeric(Reception == 0)*airEPA, na.rm = TRUE),
+              Total_Raw_airEPA = sum(airEPA,na.rm = TRUE),
               Raw_airEPA_per_Att = Total_Raw_airEPA / Attempts,
               Raw_airEPA_per_Drive = Total_Raw_airEPA / Drives,
+              epa_PACR = Total_EPA / Total_Raw_airEPA,
               airEPA_per_Att = airEPA_Comp / Attempts,
               airEPA_per_Comp = airEPA_Comp / Completions,
               airEPA_per_Drive = airEPA_Comp / Drives,
               air_Success_Rate = length(which(airEPA>0)) / Attempts,
               air_Comp_Success_Rate = length(which((Reception*airEPA)>0)) / Attempts,
-              airWPA_Comp = sum(Reception*airWPA,na.rm=TRUE),
-              airWPA_Incomp = sum(as.numeric(Reception==0)*airWPA,na.rm=TRUE),
-              Total_Raw_airWPA = sum(airWPA,na.rm=TRUE),
+              airWPA_Comp = sum(Reception*airWPA,na.rm = TRUE),
+              airWPA_Incomp = sum(as.numeric(Reception == 0)*airWPA, na.rm = TRUE),
+              Total_Raw_airWPA = sum(airWPA,na.rm = TRUE),
+              wpa_PACR = Total_WPA / Total_Raw_airWPA,
               Raw_airWPA_per_Att = Total_Raw_airWPA / Attempts,
               Raw_airWPA_per_Drive = Total_Raw_airWPA / Drives,
               airWPA_per_Att = airWPA_Comp / Attempts,
@@ -272,7 +339,7 @@ calc_receiving_splits <- function(splits,pbp_df) {
               TDs = sum(Touchdown,na.rm=TRUE),
               TDs_per_Drive = TDs / Drives,
               Fumbles_per_Drive = Fumbles / Drives,
-              AC_TDs = sum(as.numeric(YardsAfterCatch>0)*Touchdown,na.rm=TRUE),
+              AC_TDs = sum(as.numeric(YardsAfterCatch > 0)*Touchdown,na.rm=TRUE),
               AC_TDs_per_Drive = AC_TDs / Drives,
               AC_TD_Rate = AC_TDs / TDs,
               TD_to_Fumbles = TDs / Fumbles,
@@ -297,12 +364,14 @@ calc_receiving_splits <- function(splits,pbp_df) {
               PACR = Total_Yards / Total_Raw_AirYards,
               Total_Caught_AirYards = sum(Reception*AirYards, na.rm=TRUE),
               Raw_AirYards_per_Target = Total_Raw_AirYards / Targets,
+              RACR = Total_Yards / Total_Raw_AirYards,
               Total_Raw_airEPA = sum(airEPA, na.rm=TRUE),
               Total_Caught_airEPA = sum(Reception*airEPA, na.rm=TRUE),
               Raw_airEPA_per_Drive = Total_Raw_airEPA / Drives,
               Caught_airEPA_per_Drive = Total_Caught_airEPA / Drives,
               airEPA_per_Target = Total_Raw_airEPA / Targets,
               Caught_airEPA_per_Target = Total_Caught_airEPA / Targets,
+              epa_RACR = Total_EPA / Total_Raw_airEPA,
               Total_Raw_airWPA = sum(airWPA, na.rm=TRUE),
               Total_Caught_airWPA = sum(Reception*airWPA, na.rm=TRUE),
               Raw_airWPA_per_Drive = Total_Raw_airWPA / Drives,
@@ -323,6 +392,7 @@ calc_receiving_splits <- function(splits,pbp_df) {
               yacWPA_per_Rec = yacWPA_Rec / Receptions,
               yacWPA_Rec_per_Drive = yacWPA_Rec / Drives,
               yacWPA_Drop_per_Drive = yacWPA_Drop / Drives,
+              wpa_RACR = Total_WPA / Total_Raw_airWPA,
               yac_Success_Rate = length(which(yacEPA>0)) / Targets,
               yac_Rec_Success_Rate = length(which((Reception*yacEPA)>0)) / Targets,
               air_Success_Rate = length(which(airEPA>0)) / Targets,
@@ -335,26 +405,48 @@ calc_receiving_splits <- function(splits,pbp_df) {
 }
 
 # For now just make JAX be JAC:
-pbp_data$posteam <- with(pbp_data,ifelse(posteam=="JAX","JAC",posteam))
-pbp_data$DefensiveTeam <- with(pbp_data,ifelse(DefensiveTeam=="JAX","JAC",DefensiveTeam))
+pbp_data$posteam <- with(pbp_data,
+                         ifelse(posteam == "JAX","JAC", posteam))
+pbp_data$DefensiveTeam <- with(pbp_data,
+                               ifelse(DefensiveTeam == "JAX", "JAC", DefensiveTeam))
 
-# First generate stats at the Season level for each player (also accounting for team),
+playoff_pbp_data$posteam <- with(playoff_pbp_data, 
+                                 ifelse(posteam == "JAX", "JAC", posteam))
+playoff_pbp_data$DefensiveTeam <- with(playoff_pbp_data,
+                                       ifelse(DefensiveTeam == "JAX", "JAC", DefensiveTeam))
+
+# First generate stats at the Season level for each player,
 # removing the observations with missing player names:
 
-season_passing_df <- calc_passing_splits(c("Season","Passer_ID","posteam"), pbp_data) %>% 
-  filter(Passer_ID != "None") %>% arrange(Season,desc(Attempts)) %>% rename(Team=posteam)
+season_passing_df <- calc_passing_splits(c("Season","Passer_ID"), pbp_data) %>% 
+  filter(Passer_ID != "None") %>% arrange(Season,desc(Attempts)) 
 
-season_receiving_df <- calc_receiving_splits(c("Season","Receiver_ID","posteam"), pbp_data) %>% 
-  filter(Receiver_ID != "None") %>% arrange(Season,desc(Targets)) %>% rename(Team=posteam)
+season_receiving_df <- calc_receiving_splits(c("Season","Receiver_ID"), pbp_data) %>% 
+  filter(Receiver_ID != "None") %>% arrange(Season,desc(Targets)) 
 
-season_rushing_df <- calc_rushing_splits(c("Season","Rusher_ID","posteam"), pbp_data) %>%
-  filter(Rusher_ID != "None") %>% arrange(Season,desc(Carries)) %>% rename(Team=posteam)
+season_rushing_df <- calc_rushing_splits(c("Season","Rusher_ID"), pbp_data) %>%
+  filter(Rusher_ID != "None") %>% arrange(Season,desc(Carries)) 
+
+# Playoffs:
+
+playoff_passing_df <- calc_passing_splits(c("Season","Passer_ID"), playoff_pbp_data) %>% 
+  filter(Passer_ID != "None") %>% arrange(Season,desc(Attempts)) %>% rename(Team = posteam)
+
+playoff_receiving_df <- calc_receiving_splits(c("Season","Receiver_ID"), playoff_pbp_data) %>% 
+  filter(Receiver_ID != "None") %>% arrange(Season,desc(Targets)) %>% rename(Team = posteam)
+
+playoff_rushing_df <- calc_rushing_splits(c("Season","Rusher_ID"), playoff_pbp_data) %>%
+  filter(Rusher_ID != "None") %>% arrange(Season,desc(Carries)) %>% rename(Team = posteam)
+
 
 # Save each file
-write_csv(season_passing_df, "~/Documents/nflscrapR-data/data/season_player_stats/season_passing_df.csv")
-write_csv(season_receiving_df, "~/Documents/nflscrapR-data/data/season_player_stats/season_receiving_df.csv")
-write_csv(season_rushing_df, "~/Documents/nflscrapR-data/data/season_player_stats/season_rushing_df.csv")
+write_csv(season_passing_df, "data/season_player_stats/season_passing_df.csv")
+write_csv(season_receiving_df, "data/season_player_stats/season_receiving_df.csv")
+write_csv(season_rushing_df, "data/season_player_stats/season_rushing_df.csv")
 
+write_csv(playoff_passing_df, "data/playoff_player_stats/season_passing_df.csv")
+write_csv(playoff_receiving_df, "data/playoff_player_stats/season_receiving_df.csv")
+write_csv(playoff_rushing_df, "data/playoff_player_stats/season_rushing_df.csv")
 
 # Season level for each team:
 team_season_passing_df <- calc_passing_splits(c("Season","posteam"), pbp_data) %>% 
@@ -375,15 +467,39 @@ team_def_season_receiving_df <- calc_receiving_splits(c("Season","DefensiveTeam"
 team_def_season_rushing_df <- calc_rushing_splits(c("Season","DefensiveTeam"), pbp_data) %>%
   arrange(Season,desc(Carries)) %>% rename(Team=DefensiveTeam)
 
+# Playoffs:
+team_playoff_passing_df <- calc_passing_splits(c("Season","posteam"), playoff_pbp_data) %>% 
+  arrange(Season,desc(Attempts)) %>% rename(Team=posteam)
+
+team_playoff_receiving_df <- calc_receiving_splits(c("Season","posteam"), playoff_pbp_data) %>% 
+  arrange(Season,desc(Targets)) %>% rename(Team=posteam)
+
+team_playoff_rushing_df <- calc_rushing_splits(c("Season","posteam"), playoff_pbp_data) %>%
+  arrange(Season,desc(Carries)) %>% rename(Team=posteam)
+
+team_def_playoff_passing_df <- calc_passing_splits(c("Season","DefensiveTeam"), playoff_pbp_data) %>% 
+  arrange(Season,desc(Attempts)) %>% rename(Team=DefensiveTeam)
+
+team_def_playoff_receiving_df <- calc_receiving_splits(c("Season","DefensiveTeam"), playoff_pbp_data) %>% 
+  arrange(Season,desc(Targets)) %>% rename(Team=DefensiveTeam)
+
+team_def_playoff_rushing_df <- calc_rushing_splits(c("Season","DefensiveTeam"), playoff_pbp_data) %>%
+  arrange(Season,desc(Carries)) %>% rename(Team=DefensiveTeam)
 
 # Save each file
-write_csv(team_season_passing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_season_passing_df.csv")
-write_csv(team_season_receiving_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_season_receiving_df.csv")
-write_csv(team_season_rushing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_season_rushing_df.csv")
-write_csv(team_def_season_passing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_def_season_passing_df.csv")
-write_csv(team_def_season_receiving_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_def_season_receiving_df.csv")
-write_csv(team_def_season_rushing_df, "~/Documents/nflscrapR-data/data/season_team_stats/team_def_season_rushing_df.csv")
+write_csv(team_season_passing_df, "data/season_team_stats/team_season_passing_df.csv")
+write_csv(team_season_receiving_df, "data/season_team_stats/team_season_receiving_df.csv")
+write_csv(team_season_rushing_df, "data/season_team_stats/team_season_rushing_df.csv")
+write_csv(team_def_season_passing_df, "data/season_team_stats/team_def_season_passing_df.csv")
+write_csv(team_def_season_receiving_df, "data/season_team_stats/team_def_season_receiving_df.csv")
+write_csv(team_def_season_rushing_df, "data/season_team_stats/team_def_season_rushing_df.csv")
 
+write_csv(team_playoff_passing_df, "data/playoff_team_stats/team_playoff_passing_df.csv")
+write_csv(team_playoff_receiving_df, "data/playoff_team_stats/team_playoff_receiving_df.csv")
+write_csv(team_playoff_rushing_df, "data/playoff_team_stats/team_playoff_rushing_df.csv")
+write_csv(team_def_playoff_passing_df, "data/playoff_team_stats/team_def_playoff_passing_df.csv")
+write_csv(team_def_playoff_receiving_df, "data/playoff_team_stats/team_def_playoff_receiving_df.csv")
+write_csv(team_def_playoff_rushing_df, "data/playoff_team_stats/team_def_playoff_rushing_df.csv")
 
 # Game level:
 
@@ -399,10 +515,29 @@ game_rushing_df <- calc_rushing_splits(c("GameID","Rusher_ID","posteam","Defensi
   filter(Rusher_ID != "None") %>% arrange(GameID,desc(Carries))  %>% rename(Team=posteam,
                                                                        Opponent=DefensiveTeam)
 
+# Playoffs:
+playoff_game_passing_df <- calc_passing_splits(c("GameID","Passer_ID","posteam","DefensiveTeam"), playoff_pbp_data) %>% 
+  filter(Passer_ID != "None") %>% arrange(GameID,desc(Attempts)) %>% rename(Team=posteam,
+                                                                            Opponent=DefensiveTeam)
+
+playoff_game_receiving_df <- calc_receiving_splits(c("GameID","Receiver_ID","posteam","DefensiveTeam"), playoff_pbp_data) %>% 
+  filter(Receiver_ID != "None") %>% arrange(GameID,desc(Targets))  %>% rename(Team=posteam,
+                                                                              Opponent=DefensiveTeam)
+
+playoff_game_rushing_df <- calc_rushing_splits(c("GameID","Rusher_ID","posteam","DefensiveTeam"), playoff_pbp_data) %>%
+  filter(Rusher_ID != "None") %>% arrange(GameID,desc(Carries))  %>% rename(Team=posteam,
+                                                                            Opponent=DefensiveTeam)
+
+
 # Save each file
-write_csv(game_passing_df, "~/Documents/nflscrapR-data/data/game_player_stats/game_passing_df.csv")
-write_csv(game_receiving_df, "~/Documents/nflscrapR-data/data/game_player_stats/game_receiving_df.csv")
-write_csv(game_rushing_df, "~/Documents/nflscrapR-data/data/game_player_stats/game_rushing_df.csv")
+write_csv(game_passing_df, "data/game_player_stats/game_passing_df.csv")
+write_csv(game_receiving_df, "data/game_player_stats/game_receiving_df.csv")
+write_csv(game_rushing_df, "data/game_player_stats/game_rushing_df.csv")
+
+write_csv(playoff_game_passing_df, "data/playoff_game_player_stats/playoff_game_passing_df.csv")
+write_csv(playoff_game_receiving_df, "data/playoff_game_player_stats/playoff_game_receiving_df.csv")
+write_csv(playoff_game_rushing_df, "data/playoff_game_player_stats/playoff_game_rushing_df.csv")
+
 
 # Team Game level:
 
@@ -415,10 +550,26 @@ team_game_receiving_df <- calc_receiving_splits(c("GameID","posteam","DefensiveT
 team_game_rushing_df <- calc_rushing_splits(c("GameID","posteam","DefensiveTeam"), pbp_data) %>%
   arrange(GameID,desc(Carries))  %>% rename(Team=posteam,Opponent=DefensiveTeam)
 
+playoff_team_game_passing_df <- calc_passing_splits(c("GameID","posteam","DefensiveTeam"), playoff_pbp_data) %>% 
+  arrange(GameID,desc(Attempts)) %>% rename(Team=posteam, Opponent=DefensiveTeam)
+
+playoff_team_game_receiving_df <- calc_receiving_splits(c("GameID","posteam","DefensiveTeam"), playoff_pbp_data) %>% 
+  arrange(GameID,desc(Targets))  %>% rename(Team=posteam,Opponent=DefensiveTeam)
+
+playoff_team_game_rushing_df <- calc_rushing_splits(c("GameID","posteam","DefensiveTeam"), playoff_pbp_data) %>%
+  arrange(GameID,desc(Carries))  %>% rename(Team=posteam,Opponent=DefensiveTeam)
+
+
+
 # Save each file
 write_csv(team_game_passing_df, "~/Documents/nflscrapR-data/data/game_team_stats/game_passing_df.csv")
 write_csv(team_game_receiving_df, "~/Documents/nflscrapR-data/data/game_team_stats/game_receiving_df.csv")
 write_csv(team_game_rushing_df, "~/Documents/nflscrapR-data/data/game_team_stats/game_rushing_df.csv")
+
+write_csv(playoff_team_game_passing_df, "~/Documents/nflscrapR-data/data/playoff_game_team_stats/playoff_game_passing_df.csv")
+write_csv(playoff_team_game_receiving_df, "~/Documents/nflscrapR-data/data/playoff_game_team_stats/playoff_game_receiving_df.csv")
+write_csv(playoff_team_game_rushing_df, "~/Documents/nflscrapR-data/data/playoff_game_team_stats/playoff_game_rushing_df.csv")
+
 
 # Team rosters:
 
