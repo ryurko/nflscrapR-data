@@ -25,7 +25,9 @@ offense_epa_18 <- pbp_18 %>%
          # Kickoffs without penalties:
          kickoff_ind = ifelse(play_type == "kickoff", 1, 0),
          # Designed run indicator:
-         designed_run_ind = ifelse(play_type == "run" & qb_dropback == 0, 1, 0)) %>%
+         designed_run_ind = ifelse(play_type == "run" & qb_dropback == 0, 1, 0),
+         # no fumble indicator:
+         no_fumble_ind = ifelse(fumble_lost == 0, 1, 0)) %>%
   summarise(# Variables with counts:
             n_games = length(unique(game_id)),
             n_dropbacks = sum(qb_dropback, na.rm = TRUE),
@@ -34,6 +36,7 @@ offense_epa_18 <- pbp_18 %>%
             n_pass_attempts = sum(pass_attempt * pass_run_ind, na.rm = TRUE),
             n_completions = sum(complete_pass, na.rm = TRUE),
             n_sacks = sum(sack, na.rm = TRUE),
+            n_sacks_no_fumbles = sum(sack * no_fumble_ind, na.rm = TRUE),
             n_punts = sum(punt_ind, na.rm = TRUE),
             n_kickoffs = sum(kickoff_ind, na.rm = TRUE),
             n_pass_run_plays = sum(pass_run_ind, na.rm = TRUE),
@@ -59,6 +62,8 @@ offense_epa_18 <- pbp_18 %>%
             off_kickoff_epa = sum(epa * kickoff_ind, na.rm = TRUE),
             off_kickoff_wpa = sum(wpa * kickoff_ind, na.rm = TRUE),
             off_sacks_epa = sum(epa * sack, na.rm = TRUE),
+            off_sacks_no_fumbles_epa = sum(epa * sack * no_fumble_ind,
+                                           na.rm = TRUE) / n_sacks_no_fumbles,
             off_sacks_wpa = sum(wpa * sack, na.rm = TRUE),
             # Success rates:
             off_pass_run_sr = length(which(epa > 0 & pass_run_ind == 1)) / n_pass_run_plays,
@@ -81,6 +86,7 @@ offense_epa_18 <- pbp_18 %>%
          off_epa_per_punt = off_punt_epa / n_punts,
          off_epa_per_ko = off_kickoff_epa / n_kickoffs,
          off_epa_per_sack = off_sacks_epa / n_sacks,
+         off_epa_per_sack_no_fumbles = off_sacks_no_fumbles_epa / n_sacks_no_fumbles,
          # Now WPA based:
          off_wpa_per_game = off_total_wpa / n_games,
          off_wpa_per_pass_run = off_pass_run_wpa / n_pass_run_plays,
@@ -106,7 +112,9 @@ defense_epa_18 <- pbp_18 %>%
          # Kickoffs without penalties:
          kickoff_ind = ifelse(play_type == "kickoff", 1, 0),
          # Designed run indicator:
-         designed_run_ind = ifelse(play_type == "run" & qb_dropback == 0, 1, 0)) %>%
+         designed_run_ind = ifelse(play_type == "run" & qb_dropback == 0, 1, 0),
+         # no fumble indicator:
+         no_fumble_ind = ifelse(fumble_lost == 0, 1, 0)) %>%
   summarise(# Variables with counts:
             n_games = length(unique(game_id)),
             n_dropbacks = sum(qb_dropback, na.rm = TRUE),
@@ -115,6 +123,7 @@ defense_epa_18 <- pbp_18 %>%
             n_pass_attempts = sum(pass_attempt * pass_run_ind, na.rm = TRUE),
             n_completions = sum(complete_pass, na.rm = TRUE),
             n_sacks = sum(sack, na.rm = TRUE),
+            n_sacks_no_fumbles = sum(sack * no_fumble_ind, na.rm = TRUE),
             n_punts = sum(punt_ind, na.rm = TRUE),
             n_kickoffs = sum(kickoff_ind, na.rm = TRUE),
             n_pass_run_plays = sum(pass_run_ind, na.rm = TRUE),
@@ -141,6 +150,8 @@ defense_epa_18 <- pbp_18 %>%
             def_kickoff_wpa = sum(wpa * kickoff_ind, na.rm = TRUE),
             def_sacks_epa = sum(epa * sack, na.rm = TRUE),
             def_sacks_wpa = sum(wpa * sack, na.rm = TRUE),
+            def_sacks_no_fumbles_epa = sum(epa * sack * no_fumble_ind,
+                                           na.rm = TRUE) / n_sacks_no_fumbles,
             # Success rates:
             def_pass_run_sr = length(which(epa < 0 & pass_run_ind == 1)) / n_pass_run_plays,
             def_all_runs_sr = length(which(epa < 0 & 
@@ -162,6 +173,7 @@ defense_epa_18 <- pbp_18 %>%
     def_epa_per_punt = -1 * def_punt_epa / n_punts,
     def_epa_per_ko = -1 * def_kickoff_epa / n_kickoffs,
     def_epa_per_sack = -1 * def_sacks_epa / n_sacks,
+    def_epa_per_sack_no_fumbles = -1 * def_sacks_no_fumbles_epa / n_sacks_no_fumbles,
     # Now WPA based:
     def_wpa_per_game = -1 * def_total_wpa / n_games,
     def_wpa_per_pass_run = -1 * def_pass_run_wpa / n_pass_run_plays,
@@ -182,10 +194,7 @@ defense_epa_18 <- pbp_18 %>%
 # install.packages("ggimage")
 library(ggimage)
 
-nfl_logo_url <- getURL("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/nfl_teamlogos.csv")
 nfl_logos_df <- read_csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/nfl_teamlogos.csv")
-scrimmage.plays.summary <- scrimmage.plays.summary %>% 
-  left_join(df.logos, by = c("posteam" = "team_code"))
 
 # Create the data frame to be used for all of the charts:
 chart_summary_data <- offense_epa_18 %>%
@@ -362,6 +371,24 @@ chart_summary_data %>%
        y = "Defensive EPA per sack",
        caption = "Data from nflscrapR",
        title = "Offensive and Defensive EPA per sack for each team",
+       subtitle = "Through week 7 of 2018 NFL season") +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  theme_bw() +
+  theme(axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 12))
+
+# Without fumbles:
+chart_summary_data %>%
+  ggplot(aes(x = off_epa_per_sack_no_fumbles, y = def_epa_per_sack_no_fumbles)) +
+  geom_image(aes(image = url), size = 0.05) +
+  labs(x = "Offensive EPA per sack (lost fumbles excluded)",
+       y = "Defensive EPA per sack (lost fumbles excluded)",
+       caption = "Data from nflscrapR",
+       title = "Offensive and Defensive EPA per sack (lost fumbles excluded) for each team",
        subtitle = "Through week 7 of 2018 NFL season") +
   geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
   geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
