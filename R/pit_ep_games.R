@@ -19,8 +19,6 @@ pit_pbp_18 <- pbp_18 %>%
 
 # Access the team colors
 data("nflteams")
-scale_fill_manual(values = sapply(epa_passer_db_teams, function(x) nflteams$primary[which(nflteams$abbr == x)]), 
-                  guide = FALSE)
 
 # Get Steelers primary color:
 pit_primary_color <- nflteams %>% 
