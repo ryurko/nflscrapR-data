@@ -7,6 +7,9 @@ The data folders are organized in the following manner (will be updating):
 
 + [play_by_play_data](https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data) - all play-by-play 
 data accessed with `nflscrapR`, with three folders for pre-, post-, and regular season games.
++ [games_data](https://github.com/ryurko/nflscrapR-data/blob/master/games_data) - all game data accessed
+with the `nflscrapR::scrape_game_ids` function containing info such as the home and away team,
+score, game's URL, with three folders for pre-, post-, and regular season games.
 + [legacy_data](https://github.com/ryurko/nflscrapR-data/blob/master/legacy_data) - all data accessed and generated with previous version of `nflscrapR`  
 
 Additionally, code examples are located in the [R folder](https://github.com/ryurko/nflscrapR-data/blob/master/R).

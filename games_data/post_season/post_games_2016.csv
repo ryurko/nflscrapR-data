@@ -1,0 +1,13 @@
+type,game_id,home_team,away_team,week,season,state_of_game,game_url,home_score,away_score
+post,2017010700,HOU,OAK,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017010700/2017010700_gtd.json,27,14
+post,2017010701,SEA,DET,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017010701/2017010701_gtd.json,26,6
+post,2017010800,PIT,MIA,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017010800/2017010800_gtd.json,30,12
+post,2017010801,GB,NYG,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017010801/2017010801_gtd.json,38,13
+post,2017011400,ATL,SEA,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017011400/2017011400_gtd.json,36,20
+post,2017011401,NE,HOU,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017011401/2017011401_gtd.json,34,16
+post,2017011501,DAL,GB,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017011501/2017011501_gtd.json,31,34
+post,2017011500,KC,PIT,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017011500/2017011500_gtd.json,16,18
+post,2017012200,ATL,GB,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017012200/2017012200_gtd.json,44,21
+post,2017012201,NE,PIT,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017012201/2017012201_gtd.json,36,17
+post,2017012900,NPR,APR,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017012900/2017012900_gtd.json,13,20
+post,2017020500,ATL,NE,18,2016,POST,http://www.nfl.com/liveupdate/game-center/2017020500/2017020500_gtd.json,28,34
