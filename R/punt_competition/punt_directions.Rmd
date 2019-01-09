@@ -1,0 +1,187 @@
+---
+title: "NFL Punt Directional Analysis"
+output: html_notebook
+---
+
+This report examines the distribution of punt angles using the provided 
+Next Gen Stats tracking data. The data loaded below is created from another
+submitted kernel by Kostas.
+
+```{r, warning = FALSE, message = FALSE}
+# Load the data made by Kostas' kernel:
+load("angles.RDa")
+
+# Access tidyverse:
+# install.packages("tidyverse")
+library(tidyverse)
+
+# Using the dataset created by Kostas from the Next Gen Stats files, first
+# create new fields that are normalizing the location and directions of 
+# punts on the cartesian plane. This means flipping the x and y values for
+# punts that took place on the right side of the field since they were going
+# other way:
+punt_data <- loc.punt.RetFC %>%
+  # First flip the x coordinates based on whether or not the punter was on the
+  # right half of the field (in terms of the endzones, not sidelines)
+  mutate(x1_flip = ifelse(x1 > 60, 120 - x1, x1),
+         x2_flip = ifelse(x1 > 60, 120 - x2, x2),
+         # Flip the y coordinates based on whether or not the punter was on the
+         # right half of the field (in terms of endzones), and flip the y-coordinates
+         # so all punts are with respect to the sideline they are closest to.
+         # This means the visitor sideline should be on the left (with respect to
+         # the punter) for punts on the
+         # left side of the field (with respect to endzone), but are on the right
+         # (with respect to the punter) on the right side of the field. This means
+         # all punts with y-values less than 26.825 are closer to the right sideline
+         # with respect to the punter.
+         y1_flip = ifelse(x1 > 60, max(loc.punt.RetFC$y2) - y1, y1),
+         y2_flip = ifelse(x1 > 60, max(loc.punt.RetFC$y2) - y2, y2),
+         # Get the x with respect to the line of scrimmage
+         x1_los = yrdline + 10,
+         # Now place line of scrimmage and vertical location of the punt at
+         # cartesian origin:
+         x1_shift = 0,
+         x2_shift = x2_flip - x1_los,
+         y1_shift = 0,
+         y2_shift = y2_flip - y1_flip) %>%
+  # Use the useful package to get the polar coordinates for the punts with
+  # respect to the closest sideline:
+  bind_cols(dplyr::select(useful::cart2pol(.$x2_shift, .$y2_shift, degrees = FALSE),
+                          r, theta) %>%
+              rename(ref_theta = theta),
+            dplyr::select(useful::cart2pol(.$x2_shift, .$y2_shift, degrees = TRUE),
+                                           theta) %>%
+              rename(ref_angle = theta)) %>%
+  # Allow the angles to be negative on the right hand side:
+  mutate(mirror_angle = ifelse(ref_angle > 180, ref_angle - 360, ref_angle))
+
+```
+
+Using this adjusted data, we can create a plot displaying the mean distance in
+yards from the line of scrimmage to where the ball landed by direction:
+
+```{r, message = FALSE, warning = FALSE,  fig.height=3, fig.width=3}
+punt_data %>%
+  # Create a field denoting which sideline left or right the punter
+  # was closer to:
+  mutate(field_bucket_x = cut(x1_los, breaks = c(0, 10, 20, max(x1_los)),
+                              labels = c("0 - 10 yardline",
+                                         "11 - 20 yardline",
+                                         "21+ yardline")),
+         field_bucket_x = fct_rev(field_bucket_x),
+         field_bucket_y = cut(y1_flip, breaks = c(0, max(loc.punt.RetFC$y2) / 2,
+                                                  max(loc.punt.RetFC$y2)),
+                              labels = c("Closer to right sideline",
+                                         "Closer to left sideline")),
+         field_bucket_y = fct_rev(field_bucket_y),
+         angle_bucket = cut(mirror_angle, breaks = seq(-180, 180, by = 360/41))) %>%
+  unite(punt_group, "field_bucket_x", "field_bucket_y", "angle_bucket",
+        remove = FALSE) %>%
+  group_by(field_bucket_y) %>%
+  mutate(n_punts_location = n()) %>%
+  ungroup() %>%
+  group_by(field_bucket_y, angle_bucket) %>%
+  summarise(prop_punts = n() / first(n_punts_location),
+            mean_length = mean(x2_shift),
+            se_length = sd(x2_shift) / sqrt(n())) %>%
+  ggplot(aes(x = angle_bucket,
+             y = mean_length, fill = prop_punts)) +
+  geom_bar(stat = "identity", color = "white") +
+  geom_errorbar(aes(ymin = mean_length - 2 * se_length,
+                    ymax = mean_length + 2* se_length),
+                color = "black") +
+  scale_x_discrete(drop = FALSE, breaks = "") +
+  scale_fill_gradient(low = "darkblue", high = "darkorange") +
+  coord_polar(direction = -1, start = pi) +
+  theme_bw() +
+  labs(x = "Direction of punt from punter's perspective (degrees)",
+       y = "Average yards traveled from line of scrimmage\n+/- two standard errors",
+       title = "Average length of punts from line of scrimmage\nby direction of punt and side of field",
+       caption = "Pelechrinis, Yurko, Ventura (2019)",
+       fill = "Proportion of punts\nat location") +
+  facet_wrap(~field_bucket_y, ncol = 2) + 
+    theme(axis.title = element_text(size = 10),
+        axis.text = element_text(size = 10),
+        plot.title = element_text(size = 14),
+        plot.subtitle = element_text(size = 10),
+        plot.caption = element_text(size = 10),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10)) 
+```
+
+We also explored modeling the punts using a mixture of von Mises-Fisher distributions.
+The goal was to see if there are clusters of punts based solely on the direction:
+
+```{r, warning = FALSE, message = FALSE, fig.height=5, fig.width=3}
+# Access the movMF package
+# install.packages("movMF")
+library(movMF)
+
+# Fit various mixtures of von Mises-Fisher distributions from 1 to 10 clusters,
+# with varying concentration parameter estimates for the clusters:
+punt_movmfs <- map(1:10,
+                   function(g) {
+                     movMF(as.matrix(dplyr::select(punt_data, x2_shift, y2_shift)),
+                           k = g, nruns = 20)
+                              })
+# Calculate the BIC for each 
+vary_kappa_bic <- sapply(punt_movmfs, BIC)
+names(vary_kappa_bic) <- paste0("Varying kappa: ", c(1:10))
+
+# Repeat but for mixtures with common concentration:
+punt_movmfs_common <- map(1:10,
+                   function(g) {
+                     movMF(as.matrix(dplyr::select(punt_data, x2_shift, y2_shift)),
+                           k = g, nruns = 20, kappa = list(common = TRUE))
+                              })
+
+common_kappa_bic <- sapply(punt_movmfs_common, BIC)
+names(common_kappa_bic) <- paste0("Common kappa: ", c(1:10))
+
+# Which was the minimum:
+names(c(vary_kappa_bic, common_kappa_bic))[which.min(c(vary_kappa_bic, common_kappa_bic))]
+# Select G = 2 with common kappa (concentration parameter - basically inverse of variance)
+
+
+```
+
+This means the optimal mixture, according to BIC (for better or worse...) is two 
+distributions with equal concentration parameter estimates (think of the 
+concentration as the inverse of the variance, as the concentration goes to 
+infinity you simply have a point mass).
+
+We can use the mixture parameter estimates to then give us the estimated
+mean direction for both of these clusters:
+
+```{r, message = FALSE, warning = FALSE}
+punt_movmfs_common[[2]]$theta %>%
+  as.data.frame() %>%
+  bind_cols(useful::cart2pol(.$x2_shift, .$y2_shift, degrees = TRUE)) %>%
+  rename(mean_direction = theta) %>%
+  mutate(mean_direction = ifelse(mean_direction > 180, mean_direction - 360,
+                                 mean_direction)) %>%
+  dplyr::select(mean_direction) %>%
+  mutate(cluster = c(1, 2))
+```
+
+The two clusters we identified are simply the punts to which ever sideline they
+are closer to. This means if we calculate the punt directions relative to the
+closest sideline then we would not see a clear mixture or obvious group structure
+of different punt directions.
+
+The figure below captures the cluster differences just based on which side of 
+the field the punt landed.
+
+```{r}
+punt_data %>%
+  mutate(cluster = as.factor(predict(punt_movmfs_common[[2]]))) %>%
+  ggplot(aes(x = x1_flip, y = y2_shift, color = cluster)) +
+  scale_color_manual(values = c("darkblue", "darkorange")) +
+  geom_point(alpha = 0.5) +
+  theme_bw() +
+  labs(x = "Starting horizontal location of kick",
+       y = "Vertical location on field")
+```
+

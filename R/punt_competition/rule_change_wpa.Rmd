@@ -1,0 +1,309 @@
+---
+title: "NFL Punt Rule Change Win Probability Impact"
+output: html_notebook
+bibliography: references.bib
+---
+
+This report examines the impact on a team's win probability from our proposed
+rule changes to incentivize less returns on punts by NFL teams.
+
+We first gather NFL.com play-by-play data accessed via the `nflscrapR` in `R`, 
+with all pre-, post-, and regular season data for the 2016 and 2017 seasons available here: https://github.com/ryurko/nflscrapR-data/tree/master/play_by_play_data
+
+```{r, warning = FALSE, message = FALSE}
+# Access tidyverse:
+# install.packages("tidyverse")
+library(tidyverse)
+
+# Access nflscrapR:
+# install_packages("devtools")
+# devtools::install_github(repo = "maksimhorowitz/nflscrapR")
+library(nflscrapR)
+
+# Load the play-by-play data from the 2016 and 2017 season available in the repository above:
+
+# Create the combination of year and type of games to access data for:
+season_type_data <- expand.grid(c(2016, 2017), 
+                              c("pre", "regular", "post")) %>%
+  rename(season = Var1, type = Var2)
+
+# Join all of these seasons together:
+pbp_data <- map2_dfr(season_type_data$season, as.character(season_type_data$type),
+                    .f = function(season, type) {
+                      # Shorten abbreviation to reg for regular season:
+                      type_abbr <- if_else(type == "regular", "reg", type)
+                      
+                      # Now load the data:
+                      read_csv(paste0(
+                        "https://raw.githubusercontent.com/ryurko/nflscrapR-data/master/play_by_play_data/", 
+                        type, "_season/", type_abbr, "_pbp_", season, ".csv"),
+                        progress = FALSE)
+                    })
+
+# Access all punts as well as any play following the punt in order to have
+# proper win probability calculation:
+punt_pbp_data <- pbp_data %>%
+  group_by(game_id) %>%
+  # Create booleans for the certain situations we're interested in making
+  # rule changes for:
+  mutate(follow_punt = ifelse(lag(play_type == "punt"), TRUE, FALSE),
+         follow_fair_catch = ifelse(lag(punt_fair_catch) == 1, TRUE, FALSE),
+         follow_punt_oob = ifelse(lag(punt_out_of_bounds) == 1, TRUE, FALSE),
+         follow_punt_touchback = ifelse(follow_punt & lag(touchback == 1), 
+                                        TRUE, FALSE),
+         follow_downed_punt = ifelse(lag(punt_downed) == 1, TRUE, FALSE)) %>%
+  filter(play_type == "punt" |
+         follow_punt) %>%
+  ungroup()
+
+```
+
+Since our proposed rule change to lower the concussion rate on punts is to simply
+incentivize teams to return less often, it is necessary to view the impact of our
+proposed incentives on the game itself. We propose the following two rule changes:
+
+#. Return team gains 5 additional yards on a fair catch (__incentive for return team__).
+#. Return team loses 5 yards from the point the ball goes out of bounds in the air (__incentive for the punting team__). 
+
+There are no proposed incentive structures for punts that land in play, regular 
+rules will apply.
+
+The histogram below displays the distribution of return yards for all punt 
+returns (excluding fair catch, touchbacks, out of bounds, and downed punts) with 
+a reference line at our proposed shift of five yards. Roughly `r round(digits = 2, nrow(filter(punt_pbp_data,play_type == "punt", punt_fair_catch == 0 & punt_out_of_bounds == 0 & touchback == 0 & punt_downed == 0, return_yards <= 5)) / nrow(filter(punt_pbp_data,play_type == "punt", punt_fair_catch == 0 & punt_out_of_bounds == 0 & touchback == 0 & punt_downed == 0)) * 100)`% of punt
+returns are less than or equal to 5 yards.
+
+```{r, fig.width = 4, fig.height = 3}
+punt_pbp_data %>%
+  filter(play_type == "punt",
+         punt_fair_catch == 0 & punt_out_of_bounds == 0 & 
+           touchback == 0 &
+           punt_downed == 0) %>%
+  ggplot(aes(x = return_yards)) +
+  geom_histogram(fill = "darkblue", color = "black",
+                 breaks = seq(-15, 100, by = 5)) +
+  scale_x_continuous(limits = c(-15, 100), breaks = seq(-10, 100, by = 10)) +
+  geom_rug(color = "darkblue", alpha = 0.75) +
+  geom_vline(xintercept = 5, color = "darkorange", linetype = "dashed", size = 1.5) +
+  labs(x = "Return yards",
+       y = "Frequency", 
+       title = "Distribution of punt return yards from pre-, post-, and regular season games (2016-17)",
+       subtitle = "Only includes punts with returns; dashed vertical line denoting five yard returns",
+       caption = "Pelechrinis, Yurko, Ventura (2019)\nData courtesy of NFL.com, accessed with `nflscrapR`") +
+  theme_bw() 
+```
+
+The empirical CDF below is displaying the same information, but now is it easier
+to see that the proposed yardage shift of 5 yards is comparable to the median
+of return yards which is `r punt_pbp_data %>% filter(play_type == "punt", punt_fair_catch == 0, punt_out_of_bounds == 0, touchback == 0, punt_downed == 0) %>% pull(return_yards) %>% median()` yards.
+
+```{r, fig.width = 4, fig.height = 3}
+punt_pbp_data %>%
+  filter(play_type == "punt",
+         punt_fair_catch == 0 & punt_out_of_bounds == 0 & 
+           touchback == 0 & punt_downed == 0) %>%
+  ggplot(aes(x = return_yards)) +
+  stat_ecdf(color = "darkblue") +
+  scale_x_continuous(limits = c(-15, 100), breaks = seq(-10, 100, by = 10)) +
+  geom_vline(xintercept = 5, color = "darkorange", linetype = "dashed") +
+  labs(x = "Return yards",
+       y = "Cumulative proportion of returns", 
+       title = "Empirical CDF of punt return yards from pre-, post-, and regular season games (2016-17)",
+       subtitle = "Only includes punts with returns; dashed vertical line denoting five yard returns",
+       caption = "Pelechrinis, Yurko, Ventura (2019)\nData courtesy of NFL.com, accessed with `nflscrapR`") +
+  theme_bw() 
+```
+
+Next, using the win probability in `nflscrapR` [@Yurko18], we calculate the 
+win probability added from the proposed change for all punt returns with a
+fair catch or out of bounds, and compare it to the win probability
+added from returns. This means we are comparing the change in win probability
+from where the returning team would have hypothetically received the ball given
+the current rules to where the return ends or the 5 yard shift from the proposed
+rule change. Downed punts and touchbacks are not included in the figure below.
+
+```{r, warning = FALSE, message = FALSE, fig.width=5, fig.height=5, fig.align="center"}
+
+# Create a new dataset of punts and following plays by adjusting the following
+# plays starting field position based on the proposed rule change for the
+# particular situation:
+punt_adj_data <- punt_pbp_data %>%
+  # Create a label for all punts and following plays based on whether it was
+  # a normal return, fair catch, out of bounds, or touchback:
+  mutate(punt_type = case_when(
+    (play_type == "punt" & punt_fair_catch == 1) |
+      follow_fair_catch ~ "fair_catch",
+    (play_type == "punt" & punt_out_of_bounds == 1) |
+      follow_punt_oob ~ "out_of_bounds",
+    (play_type == "punt" & touchback == 1) |
+      follow_punt_touchback ~ "touchback",
+    (play_type == "punt" & punt_downed == 1) |
+      follow_downed_punt ~ "downed",
+    TRUE ~ "return"),
+    # Create a copy variable for the map function to use easily:
+    punt_type_copy = punt_type,
+    # Create a variable that has the yard adjustment with respect to the return team:
+        yard_adjust = case_when(
+        punt_type == "fair_catch" ~ 5,
+        punt_type %in% c("out_of_bounds", "touchback") ~ -5,
+        TRUE ~ -1 * as.numeric(lag(return_yards)))) %>%
+  # Remove downed and touchback punt rows:
+  filter(!(punt_type %in% c("downed", "touchback"))) %>%
+  # Now group by this punt type:
+  group_by(punt_type) %>%
+  # Nest this dataframe:
+  nest() %>%
+  # Now apply a function to each of the datasets that calculates the change 
+  # in win probability based on the proposed rule change:
+  mutate(data = map(data,
+                    function(x) {
+                      x %>% 
+                        # Create an adjusted yardline_100 based on the yard_adjust,
+                        # capping at 99 yards away from opponents end zone:
+                        mutate(adj_yardline_100 = pmin(yardline_100 - yard_adjust, 99),
+                               less_than_10 = ifelse(yardline_100 <= 10, TRUE, FALSE),
+                               adj_yardline_100 = ifelse(less_than_10, ceiling(yardline_100 / 2),
+                                                         adj_yardline_100)) %>%
+                        # Select the necessary columns for win probability calculations and other info:
+                        dplyr::select(game_id, play_type, punt_fair_catch, 
+                                      follow_punt, follow_fair_catch,
+                                      posteam, defteam, desc, yardline_100, 
+                                      adj_yardline_100, half_seconds_remaining, 
+                                      game_seconds_remaining, down, ydstogo, 
+                                      goal_to_go, qtr, score_differential,
+                                      posteam_timeouts_remaining, 
+                                      defteam_timeouts_remaining,
+                                      return_yards,
+                                      # Including the original WP, EP, and WPA:
+                                      wp, ep, wpa, yard_adjust, punt_type_copy) %>%
+                        # Rename the original WP and EP columns
+                        rename(original_wp = wp,
+                               original_EP = ep) %>%
+                        # Now calculate the expected points for the adjusted yard line:
+                        calculate_expected_points("half_seconds_remaining",
+                                                  "adj_yardline_100", "down", 
+                                                  "ydstogo", "goal_to_go") %>%
+                        calculate_win_probability("half_seconds_remaining", 
+                                                  "game_seconds_remaining",
+                                                  "score_differential", "qtr", 
+                                                  "posteam_timeouts_remaining",
+                                                  "defteam_timeouts_remaining", 
+                                                  "ep") %>%
+                        # Calculate the win probability added for rule change:
+                        group_by(game_id) %>%
+                        # If the type if just a return, then take the difference
+                        # of the original WP with the adjusted from where the ball
+                        # was returned from (with respect to the return team) 
+                        # otherwise calculate rule change WPA:
+                        mutate(rule_change_wpa = if_else(punt_type_copy == "return",
+                                                         original_wp - wp,
+                                                         wp - original_wp)) %>%
+                        ungroup()
+                    })) %>%
+  # Unnest the data and ungroup:
+  unnest() %>% ungroup()
+
+# Save this file for the kernel to access:
+# write.csv(punt_adj_data, "~/Documents/nflscrapR-data/R/punt_competition/punt_adj_data.csv")
+
+
+# Visualize the distributions of WPA due from returns compared to the proposed
+# rule changes using histograms:
+punt_adj_data %>%
+  # Only look at the plays following punts, removing QB kneels and overtime,
+  # as well as touchbacks:
+  filter(follow_punt, play_type != "qb_kneel", qtr != 5) %>%
+  # Reorder and relabel the punt_type:
+  mutate(punt_type = fct_relevel(punt_type, "return", "fair_catch", 
+                                 "out_of_bounds"),
+         punt_type = fct_recode(punt_type, `Historical punt returns` = "return", 
+                                              `Rule change #1: 5 yard fair catch adjustment` = "fair_catch",
+                                              #`Rule change: touchback` = "touchback",
+                                              `Rule change #2: -5 yards out of bounds adjustment` = "out_of_bounds")) %>%
+  # Create beeswarm plots with boxplots overtop:
+  ggplot(aes(x = rule_change_wpa)) +
+  geom_histogram(aes(fill = punt_type), color = "black",
+                 breaks = seq(-.05, .35, by = .005)) +
+  ggthemes::scale_fill_colorblind(guide = FALSE) +
+  facet_wrap(~punt_type, ncol = 1) +
+  # geom_density_ridges(aes(y = punt_type), rel_min_height = 0.01, jittered_points = TRUE, color = "white",
+  #                     position = position_points_jitter(width = 0, height = 0),
+  #                     point_shape = '|', point_size = 1, point_alpha = 0.7, alpha = 0.8,
+  #                     fill = "darkblue", point_color = "darkblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "darkred", size = 1.5) +
+  geom_text(data = data.frame("punt_type" = c("Rule change #1: 5 yard fair catch adjustment",
+                                              "Rule change #2: -5 yards out of bounds adjustment"),
+                              "text_label" = c("Rule change #1\nfavors return team",
+                                               "Rule change #2\nfavors punting team"),
+                              "x" = c(.06, .06),
+                              "y" = c(450, 450)), aes(x, y, label = text_label),
+            color = "darkred", size = 6) +
+  scale_x_continuous(limits = c(-0.05, .2), breaks = seq(-.05, .2, by = .05)) +
+  labs(title = "Distribution of win probability added from returns compared to proposed rule changes",
+       #subtitle = "Calculated with respect to possession team",
+       subtitle = "All punt returns from pre-, post-, and regular season games in 2016 and 2017",
+       caption = "Pelechrinis, Yurko, Ventura (2019)\nData courtesy of NFL.com, accessed with `nflscrapR`",
+       x = "Win probability added (WPA) with respect to return team",
+       y = "Frequency") +
+  #scale_y_discrete(expand = c(0.01, 0.01)) +
+  #scale_x_continuous(limits = c(-.5, .5)) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 14),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 12),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 14))  
+
+
+```
+
+The figure below just displays the empirical CDF form of the above chart:
+
+
+```{r, warning = FALSE, message = FALSE,  fig.align="center"}
+ecdf_war_plot <- punt_adj_data %>%
+  # Only look at the plays following punts, removing QB kneels and overtime:
+  filter(follow_punt, play_type != "qb_kneel", qtr != 5) %>%
+  # Reorder and relabel the punt_type:
+  mutate(punt_type = fct_relevel(punt_type, "return", "fair_catch",
+                                 "out_of_bounds"),
+         punt_type = fct_recode(punt_type, `Historical punt returns` = "return", 
+                                              `Rule change #1: 5 yard fair catch adjustment` = "fair_catch",
+                                              #`Rule change: touchback` = "touchback",
+                                              `Rule change #2: -5 yards out of bounds adjustment` = "out_of_bounds")) %>%
+  # Create beeswarm plots with boxplots overtop:
+  ggplot(aes(x = rule_change_wpa, color = punt_type)) +
+  stat_ecdf(alpha = 0.8) +
+  ggthemes::scale_color_colorblind() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "darkred", size = 1.5) +
+  labs(title = "Empirical CDF of win probability added from returns compared to proposed rule changes",
+       #subtitle = "Calculated with respect to possession team",
+       subtitle = "All punt returns from pre-, post-, and regular season games in 2016 and 2017",
+       caption = "Data courtesy of NFL.com, WPA generated w/ `nflscrapR`",
+       x = "Win probability added (WPA) with respect to return team",
+       y = "Cumulative proportion of punt return type", 
+       color = "Punt return type") +
+  #scale_y_discrete(expand = c(0.01, 0.01)) +
+  #scale_x_continuous(limits = c(-.5, .5)) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 10),
+        axis.text = element_text(size = 10),
+        plot.title = element_text(size = 12),
+        plot.subtitle = element_text(size = 10),
+        plot.caption = element_text(size = 8),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 14),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 10))  
+library(cowplot)
+ecdf_legend <- get_legend(ecdf_war_plot)
+
+plot_grid(ecdf_war_plot + theme(legend.position = "none"),
+          ecdf_legend, ncol = 1, rel_heights = c(3,1))
+
+```
+
+
+# References
