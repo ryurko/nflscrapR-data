@@ -80,3 +80,83 @@ fourth_down_plays %>%
        caption = "Data via nflscrapR")
 
 write_csv(fourth_down_plays, "fourth_down_plays.csv")
+fourth_down_plays <- read_csv("fourth_down_plays.csv")
+
+# Change STL to LA:
+fourth_down_plays <- fourth_down_plays %>%
+  mutate(posteam = ifelse(posteam == "STL", "LA", posteam),
+         defteam = ifelse(defteam == "STL", "LA", defteam))
+
+library(ggrepel)
+
+nflteams <- nflscrapR::nflteams %>%
+  filter(abbr %in% unique(fourth_down_plays$posteam))
+
+# Create a dataset that has summaries of each team based on the final season
+# to highlight for each division:
+team_2018_summary <-
+  fourth_down_plays %>%
+  filter(coaches_should == "Go for it",
+         pbp_season == 2018) %>%
+  group_by(posteam) %>%
+  summarize(went_for_it_perc = mean(went_for_it)) %>%
+  ungroup() %>%
+  inner_join(nflteams, by = c("posteam" = "abbr")) %>%
+  arrange(desc(went_for_it_perc)) %>%
+  # Modify Oakland primary color:
+  mutate(primary = ifelse(posteam %in% c("OAK", "PIT", "SEA", "TEN",
+                                         "JAX", "NE", "ATL"), 
+                          secondary, primary))
+
+
+division_plots <- lapply(sort(unique(team_2018_summary$division)),
+                         function(nfl_division) {
+                           
+                           division_teams <- team_2018_summary %>%
+                             filter(division == nfl_division) %>%
+                             mutate(posteam = fct_reorder(posteam, desc(went_for_it_perc)))
+                           
+                           plot_data <- fourth_down_plays %>%
+                             filter(coaches_should == "Go for it",
+                                    posteam %in% division_teams$posteam) %>%
+                             group_by(posteam, pbp_season) %>%
+                             summarize(went_for_it_perc = mean(went_for_it)) %>%
+                             ungroup() %>%
+                             mutate(posteam = factor(posteam,
+                                                     levels = levels(division_teams$posteam))) %>%
+                             mutate(team_label = if_else(pbp_season == max(pbp_season),
+                                                         as.character(posteam), 
+                                                         NA_character_))
+                             
+                           
+                           fourth_down_plays %>%
+                             filter(coaches_should == "Go for it") %>%
+                             group_by(posteam, pbp_season) %>%
+                             summarize(went_for_it_perc = mean(went_for_it)) %>%
+                             ungroup() %>%
+                             filter(!(posteam %in% division_teams$posteam)) %>%
+                             ggplot(aes(x = pbp_season, y = went_for_it_perc, group = posteam)) +
+                             geom_line(color = "gray", alpha = 0.5) +
+                             geom_line(data = plot_data,
+                                       aes(x = pbp_season, y = went_for_it_perc, group = posteam,
+                                           color = posteam)) +
+                             geom_label_repel(data = plot_data,
+                                              aes(label = team_label,
+                                                  color = posteam), nudge_x = 1, na.rm = TRUE,
+                                              direction = "y") +
+                             scale_color_manual(values = division_teams$primary, guide = FALSE) +
+                             scale_x_continuous(limits = c(2009, 2019),
+                                                breaks = c(2009:2018)) +
+                             scale_y_continuous(limits = c(0, .65)) +
+                             theme_bw() +
+                             labs(x = "Year", y = "Went for it %",
+                                  title = paste0("Division: ", nfl_division)) 
+                           
+                         })
+
+library(cowplot)
+
+plot_grid(plotlist = division_plots, ncol = 4, align = "hv")
+
+
+
