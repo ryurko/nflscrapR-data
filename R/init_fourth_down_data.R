@@ -90,7 +90,11 @@ fourth_down_plays <- fourth_down_plays %>%
 library(ggrepel)
 
 nflteams <- nflscrapR::nflteams %>%
-  filter(abbr %in% unique(fourth_down_plays$posteam))
+  filter(abbr %in% unique(fourth_down_plays$posteam)) %>%
+  # Modify Oakland primary color:
+  mutate(primary = ifelse(abbr %in% c("OAK", "PIT", "SEA", "TEN",
+                                         "JAX", "NE", "ATL"), 
+                          secondary, primary))
 
 # Create a dataset that has summaries of each team based on the final season
 # to highlight for each division:
@@ -102,11 +106,7 @@ team_2018_summary <-
   summarize(went_for_it_perc = mean(went_for_it)) %>%
   ungroup() %>%
   inner_join(nflteams, by = c("posteam" = "abbr")) %>%
-  arrange(desc(went_for_it_perc)) %>%
-  # Modify Oakland primary color:
-  mutate(primary = ifelse(posteam %in% c("OAK", "PIT", "SEA", "TEN",
-                                         "JAX", "NE", "ATL"), 
-                          secondary, primary))
+  arrange(desc(went_for_it_perc)) 
 
 
 division_plots <- lapply(sort(unique(team_2018_summary$division)),
@@ -159,4 +159,80 @@ library(cowplot)
 plot_grid(plotlist = division_plots, ncol = 4, align = "hv")
 
 
+
+smooth_end_division_plots <- lapply(sort(unique(team_2018_summary$division)),
+                                function(nfl_division) {
+                                  division_teams <- team_2018_summary %>%
+                                    filter(division == nfl_division) %>%
+                                    mutate(posteam = fct_reorder(posteam, desc(went_for_it_perc)))
+                                  
+                                  plot_data <- fourth_down_plays %>%
+                                    filter(coaches_should == "Go for it",
+                                           posteam %in% division_teams$posteam) %>%
+                                    inner_join(nflteams, by = c("posteam" = "abbr")) %>%
+                                    group_by(posteam, pbp_season) %>%
+                                    summarize(went_for_it_perc = mean(went_for_it),
+                                              team_color = first(primary)) %>%
+                                    ungroup() %>%
+                                    mutate(posteam = factor(posteam,
+                                                            levels = levels(division_teams$posteam))) %>%
+                                    mutate(team_label = if_else(pbp_season == max(pbp_season),
+                                                                as.character(posteam), 
+                                                                NA_character_))
+                                  
+                                  label_info <-
+                                    split(plot_data, plot_data$posteam) %>%
+                                    lapply(function(team_data){
+                                      data.frame(
+                                        final_pred = loess(went_for_it_perc ~ pbp_season, 
+                                                          span = 0.8, data = team_data) %>%
+                                          predict(newdata = data.frame(pbp_season = 2018)), 
+                                        max = 2018,
+                                        team = team_data$posteam[1],
+                                        team_color = team_data$team_color[1]
+                                      )}) %>%
+                                    bind_rows
+                                  
+                                  
+                                  fourth_down_plays %>%
+                                    filter(coaches_should == "Go for it") %>%
+                                    group_by(posteam, pbp_season) %>%
+                                    summarize(went_for_it_perc = mean(went_for_it)) %>%
+                                    ungroup() %>%
+                                    filter(!(posteam %in% division_teams$posteam)) %>%
+                                    ggplot(aes(x = pbp_season, y = went_for_it_perc, group = posteam)) +
+                                    geom_smooth(color = "gray91", 
+                                                size = .75, se = FALSE) +
+                                    geom_point(data = plot_data,
+                                               aes(x = pbp_season, y = went_for_it_perc, 
+                                                   color = posteam), alpha = .75) +
+                                    geom_smooth(data = plot_data,
+                                                aes(x = pbp_season, y = went_for_it_perc, group = posteam,
+                                                    color = posteam,
+                                                    linetype = posteam), se = FALSE,
+                                                method = "loess", span = 0.8) +
+                                    scale_color_manual(values = division_teams$primary) +
+                                    scale_x_continuous(breaks = c(2009:2018),
+                                                       expand = c(0, 0)) +
+                                    scale_y_continuous(limits = c(0, .65),
+                                                       sec.axis = sec_axis(~ .,
+                                                                           breaks = label_info$final_pred,
+                                                                           labels = label_info$team)) +
+                                    theme_bw() +
+                                    labs(x = "Year", y = "Went for it %",
+                                         color = "Team",
+                                         linetype = "Team",
+                                         title = paste0("Division: ", nfl_division)) +
+                                    guides(color = guide_legend(override.aes = list(size = 1.5))) +
+                                    theme(legend.position = c(.4, .85),
+                                          legend.direction = "horizontal",
+                                          legend.background = element_blank(),
+                                          legend.text = element_text(size = 8),
+                                          legend.title = element_blank(),
+                                          axis.ticks.y.right = element_blank(),
+                                          axis.text.y.right = element_text(color = label_info$team_color))
+                                  
+                                })
+
+plot_grid(plotlist = smooth_end_division_plots, ncol = 4, align = "hv")
 
