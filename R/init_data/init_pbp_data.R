@@ -45,14 +45,17 @@ reg_pbp_14 <- scrape_season_play_by_play(2014, type = "reg")
 reg_pbp_15 <- scrape_season_play_by_play(2015, type = "reg")
 reg_pbp_16 <- scrape_season_play_by_play(2016, type = "reg")
 reg_pbp_17 <- scrape_season_play_by_play(2017, type = "reg")
-# Update 2018 season as it progresses:
-reg_pbp_18 <- readr::read_csv("play_by_play_data/regular_season/reg_pbp_2018.csv")
+reg_pbp_18 <- scrape_season_play_by_play(2018, type = "reg")
+reg_pbp_19 <- scrape_season_play_by_play(2019, type = "reg", weeks = c(1, 2))
+
+# Update 2019 season as it progresses:
+reg_pbp_19 <- readr::read_csv("play_by_play_data/regular_season/reg_pbp_2019.csv")
 # Latest week - just modify the week number:
-new_week_pbp_18 <- scrape_season_play_by_play(2018, type = "reg", weeks = c(12:15))
-readr::write_csv(new_week_pbp_18,"play_by_play_data/regular_season/latest_week_pbp_2018.csv")
-new_week_pbp_18 <- readr::read_csv("play_by_play_data/regular_season/latest_week_pbp_2018.csv")
+new_week_pbp_19 <- scrape_season_play_by_play(2019, type = "reg", weeks = 3)
+readr::write_csv(new_week_pbp_19,"play_by_play_data/regular_season/latest_week_pbp_2019.csv")
+new_week_pbp_19 <- readr::read_csv("play_by_play_data/regular_season/latest_week_pbp_2019.csv")
 # Append to the data and save:
-reg_pbp_18 <- dplyr::bind_rows(reg_pbp_18, new_week_pbp_18)
+reg_pbp_18 <- dplyr::bind_rows(reg_pbp_18, new_week_pbp_19)
 
 # Save the data using readr::write_csv()
 readr::write_csv(reg_pbp_09,"play_by_play_data/regular_season/reg_pbp_2009.csv")
@@ -65,6 +68,7 @@ readr::write_csv(reg_pbp_15,"play_by_play_data/regular_season/reg_pbp_2015.csv")
 readr::write_csv(reg_pbp_16,"play_by_play_data/regular_season/reg_pbp_2016.csv")
 readr::write_csv(reg_pbp_17,"play_by_play_data/regular_season/reg_pbp_2017.csv")
 readr::write_csv(reg_pbp_18,"play_by_play_data/regular_season/reg_pbp_2018.csv")
+readr::write_csv(reg_pbp_19,"play_by_play_data/regular_season/reg_pbp_2019.csv")
 
 # For post season:
 post_pbp_09 <- scrape_season_play_by_play(2009, type = "post")
@@ -76,6 +80,7 @@ post_pbp_14 <- scrape_season_play_by_play(2014, type = "post")
 post_pbp_15 <- scrape_season_play_by_play(2015, type = "post")
 post_pbp_16 <- scrape_season_play_by_play(2016, type = "post")
 post_pbp_17 <- scrape_season_play_by_play(2017, type = "post")
+post_pbp_18 <- scrape_season_play_by_play(2018, type = "post")
 
 # Save the data using readr::write_csv()
 readr::write_csv(post_pbp_09,"play_by_play_data/post_season/post_pbp_2009.csv")
@@ -87,5 +92,6 @@ readr::write_csv(post_pbp_14,"play_by_play_data/post_season/post_pbp_2014.csv")
 readr::write_csv(post_pbp_15,"play_by_play_data/post_season/post_pbp_2015.csv")
 readr::write_csv(post_pbp_16,"play_by_play_data/post_season/post_pbp_2016.csv")
 readr::write_csv(post_pbp_17,"play_by_play_data/post_season/post_pbp_2017.csv")
+readr::write_csv(post_pbp_18,"play_by_play_data/post_season/post_pbp_2018.csv")
 
 
