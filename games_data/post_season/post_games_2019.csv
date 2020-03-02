@@ -1,0 +1,13 @@
+"","type","game_id","home_team","away_team","week","season","state_of_game","game_url","home_score","away_score"
+"1","post","2020012600","APR","NPR",18,2019,"PRE","http://www.nfl.com/liveupdate/game-center/2020012600/2020012600_gtd.json",NA,NA
+"2","post","2020010400","HOU","BUF",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020010400/2020010400_gtd.json",22,19
+"3","post","2020010401","NE","TEN",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020010401/2020010401_gtd.json",13,20
+"4","post","2020010500","NO","MIN",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020010500/2020010500_gtd.json",20,26
+"5","post","2020010501","PHI","SEA",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020010501/2020010501_gtd.json",9,17
+"6","post","2020011100","SF","MIN",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020011100/2020011100_gtd.json",27,10
+"7","post","2020011101","BAL","TEN",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020011101/2020011101_gtd.json",12,28
+"8","post","2020011200","KC","HOU",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020011200/2020011200_gtd.json",51,31
+"9","post","2020011201","GB","SEA",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020011201/2020011201_gtd.json",28,23
+"10","post","2020011900","KC","TEN",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020011900/2020011900_gtd.json",35,24
+"11","post","2020011901","SF","GB",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020011901/2020011901_gtd.json",37,20
+"12","post","2020020200","KC","SF",18,2019,"POST","http://www.nfl.com/liveupdate/game-center/2020020200/2020020200_gtd.json",31,20
